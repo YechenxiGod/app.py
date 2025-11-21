@@ -192,15 +192,18 @@ def get_summary_stats():
 def get_category_stats():
     """获取分类统计"""
     try:
-        result = db.session.execute(
-            text("SELECT Category, COUNT(*) FROM Books GROUP BY Category")
-        )
+        # 修改为使用 SQLAlchemy 查询而不是原生 SQL
+        from sqlalchemy import func
+        result = db.session.query(
+            Book.Category,
+            func.count(Book.BookID)
+        ).group_by(Book.Category).all()
 
         stats = []
-        for row in result:
+        for category, count in result:
             stats.append({
-                'category': row[0] or '未分类',
-                'count': row[1]
+                'category': category or '未分类',
+                'count': count
             })
 
         return jsonify(stats)

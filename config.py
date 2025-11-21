@@ -4,8 +4,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class Config:
-    # 使用 SQL Server 身份验证
+    # 使用 MySQL 连接
     SQLALCHEMY_DATABASE_URI = os.getenv('DATABASE_URL',
-        'mssql+pyodbc://sa:123456@localhost/BookCollectionDB?driver=ODBC+Driver+17+for+SQL+Server')
+        'mysql+pymysql://root:123456@localhost/BookCollectionDB')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SECRET_KEY = os.getenv('SECRET_KEY', 'dev-secret-key')

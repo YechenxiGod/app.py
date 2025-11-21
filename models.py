@@ -3,9 +3,8 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
-
 class Book(db.Model):
-    __tablename__ = 'Books'
+    __tablename__ = 'books'  # MySQL 表名通常用小写
 
     BookID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ISBN = db.Column(db.String(20), nullable=False)
@@ -31,12 +30,11 @@ class Book(db.Model):
             'createDate': self.CreateDate.isoformat() if self.CreateDate else None
         }
 
-
 class BorrowRecord(db.Model):
-    __tablename__ = 'BorrowRecords'
+    __tablename__ = 'borrow_records'  # MySQL 表名通常用小写
 
     RecordID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    BookID = db.Column(db.Integer, db.ForeignKey('Books.BookID'), nullable=False)
+    BookID = db.Column(db.Integer, db.ForeignKey('books.BookID'), nullable=False)
     BorrowerName = db.Column(db.String(50), nullable=False)
     BorrowDate = db.Column(db.Date, nullable=False)
     ReturnDate = db.Column(db.Date)
