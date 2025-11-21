@@ -20,11 +20,11 @@ def init_database():
         with app.app_context():
             # 测试连接
             db.session.execute(text('SELECT 1'))
-            print("✓ 数据库连接成功")
+            print("OK 数据库连接成功")
 
             # 创建表
             db.create_all()
-            print("✓ 数据库表创建成功")
+            print("OK 数据库表创建成功")
 
             # 插入示例数据（可选）
             if Book.query.count() == 0:
@@ -38,12 +38,11 @@ def init_database():
                 ]
                 db.session.bulk_save_objects(sample_books)
                 db.session.commit()
-                print("✓ 示例数据插入成功")
+                print("OK 示例数据插入成功")
 
     except Exception as e:
-        print(f"✗ 数据库初始化失败: {e}")
+        print(f"ERROR 数据库初始化失败: {e}")
         print(traceback.format_exc())
-
 
 # 初始化数据库
 init_database()
@@ -170,6 +169,60 @@ def search_books():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
+@app.route('/api/books/<int:book_id>/borrow', methods=['POST'])
+def borrow_book(book_id):
+    """借阅图书"""
+    try:
+        book = Book.query.get_or_404(book_id)
+        data = request.get_json()
+
+        if book.Status == '借出':
+            return jsonify({"error": "图书已被借出"}), 400
+
+        book.Status = '借出'
+
+        borrow_record = BorrowRecord(
+            BookID=book_id,
+            BorrowerName=data['borrowerName'],
+            BorrowDate=date.today(),
+            Notes=data.get('notes')
+        )
+
+        db.session.add(borrow_record)
+        db.session.commit()
+
+        return jsonify({"message": "借阅成功"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/borrow-records/active', methods=['GET'])
+def get_active_borrow_records():
+    """获取未归还的借阅记录"""
+    try:
+        records = BorrowRecord.query.filter_by(ReturnDate=None).all()
+        return jsonify([record.to_dict() for record in records])
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/borrow-records/<int:record_id>/return', methods=['PUT'])
+def return_book(record_id):
+    """归还图书"""
+    try:
+        record = BorrowRecord.query.get_or_404(record_id)
+        book = Book.query.get_or_404(record.BookID)
+
+        record.ReturnDate = date.today()
+        book.Status = '在架'
+
+        db.session.commit()
+        return jsonify({"message": "归还成功"})
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/books/stats/summary', methods=['GET'])
 def get_summary_stats():
