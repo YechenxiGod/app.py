@@ -8,10 +8,11 @@
 body {
     min-height: 100vh;
     display: flex;
-    justify-content: center;
+    justify-content: flex-end; /* 改为右侧对齐 */
     align-items: center;
     padding: 20px;
     overflow: hidden;
+    position: relative;
 }
 
 /* 视频背景样式 */
@@ -135,6 +136,8 @@ body {
     max-width: 420px;
     overflow: hidden;
     transition: transform 0.4s ease, box-shadow 0.4s ease;
+    /* 添加右侧定位 */
+    margin-right: 5%; /* 距离右侧5%的间距 */
 }
 
 .login-container:hover {
@@ -333,7 +336,8 @@ body {
 
 @media (max-width: 480px) {
     .login-container {
-        max-width: 100%;
+        max-width: 90%; /* 在小屏幕上稍微缩小宽度 */
+        margin-right: 5%; /* 保持右侧间距 */
     }
     
     .login-body {
@@ -359,4 +363,19 @@ body {
 
 .login-container {
     animation: fadeIn 0.7s ease-out;
+}
+
+/* 添加大屏幕的特定样式 */
+@media (min-width: 1200px) {
+    .login-container {
+        margin-right: 10%; /* 在大屏幕上增加右侧间距 */
+    }
+}
+
+/* 确保在超小屏幕上也能保持右侧位置 */
+@media (max-width: 320px) {
+    .login-container {
+        max-width: 95%;
+        margin-right: 2.5%;
+    }
 }
