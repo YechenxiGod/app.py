@@ -26,7 +26,7 @@ body {
     background: #000; /* 黑色背景作为备用 */
 }
 
-#bgVideo {
+#mutedVideo, #soundVideo {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -52,6 +52,27 @@ body {
     padding: 10px 20px;
     border-radius: 20px;
     display: none;
+}
+
+/* 交互提示 */
+.interaction-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 1rem;
+    z-index: 5;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 10px 20px;
+    border-radius: 20px;
+    text-align: center;
+    transition: opacity 0.5s ease;
+}
+
+.interaction-hint.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 /* 视频背景备用样式 */
@@ -321,6 +342,12 @@ body {
     
     .user-type-btn {
         padding: 15px;
+    }
+    
+    .interaction-hint {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+        bottom: 20px;
     }
 }
 

@@ -9,24 +9,37 @@
 <body>
     <!-- 视频背景 -->
     <div class="video-background">
-        <video autoplay loop muted playsinline id="bgVideo" preload="auto">
-            <source src="登录界面全景.mp4" type="video/mp4">
-            <source src="登录界面全景.webm" type="video/webm">
+        <!-- 静音视频 (初始播放) -->
+        <video autoplay loop muted playsinline id="mutedVideo" preload="auto">
+            <source src="【哲风壁纸】动漫角色-战斗场景.mp4" type="video/mp4">
             您的浏览器不支持视频背景。
         </video>
+        
+        <!-- 有声音视频 (交互后播放) -->
+        <video loop playsinline id="soundVideo" preload="auto" style="display: none;">
+            <source src="【𝓻𝓪𝓹𝓹𝓸𝓻𝓽】进来感受死神极致的画风和配乐.mp4" type="video/mp4">
+            您的浏览器不支持视频背景。
+        </video>
+        
         <!-- 备用背景 -->
         <div class="video-fallback">
             <div class="fallback-gradient"></div>
         </div>
+        
         <!-- 视频加载指示器 -->
         <div class="video-loading" id="videoLoading">
             正在加载背景视频...
+        </div>
+        
+        <!-- 交互提示 -->
+        <div class="interaction-hint" id="interactionHint">
+            点击静音按钮位置启用背景声音
         </div>
     </div>
     
     <!-- 声音控制按钮 -->
     <div class="sound-control" id="soundControl">
-        <span class="sound-icon">🔊</span>
+        <span class="sound-icon">🔇</span>
     </div>
     
     <div class="login-container">
