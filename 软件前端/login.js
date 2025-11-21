@@ -56,4 +56,13 @@ document.addEventListener('DOMContentLoaded', function() {
             loginForm.dispatchEvent(new Event('submit'));
         }
     });
+    
+    // 确保视频加载和播放
+    const video = document.getElementById('bgVideo');
+    if (video) {
+        video.play().catch(error => {
+            console.log('视频自动播放被阻止:', error);
+            // 可以在这里添加播放按钮或处理逻辑
+        });
+    }
 });
