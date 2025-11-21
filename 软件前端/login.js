@@ -58,12 +58,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // 如果是管理员登录，验证管理员账号
+        // 根据用户类型调用不同的登录验证
         if (userType === 'admin') {
             verifyAdminLogin(username, password);
         } else {
-            // 普通用户登录逻辑（这里可以根据需要扩展）
-            alert('普通用户登录功能暂未开放');
+            verifyUserLogin(username, password);
         }
     });
     
@@ -97,12 +96,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    // 添加输入框回车提交支持
-    document.getElementById('password').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            loginForm.dispatchEvent(new Event('submit'));
+    // 验证普通用户登录
+    async function verifyUserLogin(username, password) {
+        try {
+            const response = await fetch('http://localhost:5000/api/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // 登录成功，跳转到用户主页面
+                alert('登录成功！欢迎用户：' + username);
+                window.location.href = 'user.html';
+            } else {
+                // 登录失败，显示错误信息
+                alert(result.message || '登录失败，请检查用户名和密码');
+            }
+        } catch (error) {
+            console.error('登录请求失败:', error);
+            alert('登录请求失败，请检查网络连接或后端服务');
         }
-    });
+    }
     
     // 切换到有声音视频
     function switchToSoundVideo() {
@@ -255,4 +277,11 @@ document.addEventListener('DOMContentLoaded', function() {
     setTimeout(() => {
         interactionHint.classList.add('hidden');
     }, 5000);
+    
+    // 添加输入框回车提交支持
+    document.getElementById('password').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            loginForm.dispatchEvent(new Event('submit'));
+        }
+    });
 });

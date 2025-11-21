@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from models import db, Book, BorrowRecord, AdminUser
+from models import db, Book, BorrowRecord, AdminUser, User
 from config import Config
 from datetime import datetime, date
 from sqlalchemy import func, text
@@ -47,6 +47,13 @@ def init_database():
                 db.session.commit()
                 print(">>> 默认管理员账号创建成功")
 
+            # 插入默认普通用户账号（如果不存在）
+            if User.query.filter_by(Username='admin').first() is None:
+                user = User(Username='admin', Password='123456', Email='admin@example.com', Phone='13800138000')
+                db.session.add(user)
+                db.session.commit()
+                print(">>> 默认普通用户账号创建成功")
+
     except Exception as e:
         print(f">>> 数据库初始化失败: {e}")
         print(traceback.format_exc())
@@ -82,6 +89,37 @@ def admin_login():
                 "success": True,
                 "message": "登录成功",
                 "user": admin.to_dict()
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "message": "账号/密码错误或不存在"
+            }), 401
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+
+# 普通用户登录验证
+@app.route('/api/user/login', methods=['POST'])
+def user_login():
+    """普通用户登录验证"""
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            return jsonify({"success": False, "message": "用户名和密码不能为空"}), 400
+
+        # 查询普通用户
+        user = User.query.filter_by(Username=username).first()
+
+        if user and user.Password == password:
+            return jsonify({
+                "success": True,
+                "message": "登录成功",
+                "user": user.to_dict()
             })
         else:
             return jsonify({

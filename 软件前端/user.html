@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图书馆用户中心</title>
+    <link rel="stylesheet" href="user.css">
+</head>
+<body>
+    <div class="app-header">
+        <h1>图书馆用户中心</h1>
+    </div>
+
+    <div class="user-info">
+        <h2>个人信息</h2>
+        <div class="user-details">
+            <div class="info-item">
+                <label>用户名</label>
+                <span id="username">admin</span>
+            </div>
+            <div class="info-item">
+                <label>邮箱</label>
+                <span id="userEmail">admin@example.com</span>
+            </div>
+            <div class="info-item">
+                <label>手机号</label>
+                <span id="userPhone">13800138000</span>
+            </div>
+            <div class="info-item">
+                <label>注册时间</label>
+                <span id="registerDate">2024-01-01</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="nav-tab active" data-tab="home">首页</button>
+        <button class="nav-tab" data-tab="categories">分类</button>
+        <button class="nav-tab" data-tab="forum">论坛</button>
+        <button class="nav-tab" data-tab="profile">我的</button>
+    </div>
+
+    <div class="content-area">
+        <!-- 首页内容 -->
+        <div class="tab-content active" id="home">
+            <h2>欢迎来到图书馆</h2>
+            <p>在这里您可以浏览图书、参与讨论、管理个人信息。</p>
+            
+            <h3 style="margin-top: 30px;">热门图书</h3>
+            <div class="book-grid">
+                <div class="book-card">
+                    <div class="book-title">软件工程</div>
+                    <div class="book-author">作者：张三</div>
+                    <div class="book-category">计算机</div>
+                </div>
+                <div class="book-card">
+                    <div class="book-title">Java编程思想</div>
+                    <div class="book-author">作者：李四</div>
+                    <div class="book-category">计算机</div>
+                </div>
+                <div class="book-card">
+                    <div class="book-title">百年孤独</div>
+                    <div class="book-author">作者：加西亚·马尔克斯</div>
+                    <div class="book-category">文学</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分类内容 -->
+        <div class="tab-content" id="categories">
+            <h2>图书分类</h2>
+            <p>按分类浏览图书馆藏书</p>
+            
+            <div class="category-list">
+                <div class="category-item">
+                    <h3>计算机</h3>
+                    <p>25本图书</p>
+                </div>
+                <div class="category-item">
+                    <h3>文学</h3>
+                    <p>18本图书</p>
+                </div>
+                <div class="category-item">
+                    <h3>历史</h3>
+                    <p>12本图书</p>
+                </div>
+                <div class="category-item">
+                    <h3>科学</h3>
+                    <p>15本图书</p>
+                </div>
+                <div class="category-item">
+                    <h3>艺术</h3>
+                    <p>8本图书</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 论坛内容 -->
+        <div class="tab-content" id="forum">
+            <h2>读者论坛</h2>
+            <p>与其他读者交流阅读心得</p>
+            
+            <div class="forum-posts">
+                <div class="post-item">
+                    <div class="post-title">推荐几本好看的科幻小说</div>
+                    <div class="post-meta">发布者：读者A | 发布时间：2024-01-15 | 回复：12</div>
+                </div>
+                <div class="post-item">
+                    <div class="post-title">Java学习路线分享</div>
+                    <div class="post-meta">发布者：程序员B | 发布时间：2024-01-14 | 回复：25</div>
+                </div>
+                <div class="post-item">
+                    <div class="post-title">百年孤独读书笔记</div>
+                    <div class="post-meta">发布者：文学爱好者 | 发布时间：2024-01-13 | 回复：8</div>
+                </div>
+                <div class="post-item">
+                    <div class="post-title">图书馆开放时间调整通知</div>
+                    <div class="post-meta">发布者：管理员 | 发布时间：2024-01-12 | 回复：5</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 我的内容 -->
+        <div class="tab-content" id="profile">
+            <h2>个人中心</h2>
+            
+            <div style="margin-top: 20px;">
+                <h3>借阅记录</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <p>当前借阅：2本</p>
+                    <p>历史借阅：15本</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h3>收藏图书</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <p>收藏数量：5本</p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h3>我的评论</h3>
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                    <p>已发布评论：8条</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="logout-btn" onclick="logout()">退出登录</button>
+
+    <script src="user.js"></script>
+</body>
+</html>

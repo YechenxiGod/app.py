@@ -18,6 +18,25 @@ class AdminUser(db.Model):
             'createDate': self.CreateDate.isoformat() if self.CreateDate else None
         }
 
+class User(db.Model):
+    __tablename__ = 'users'
+
+    UserID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Username = db.Column(db.String(50), nullable=False, unique=True)
+    Password = db.Column(db.String(100), nullable=False)
+    Email = db.Column(db.String(100))
+    Phone = db.Column(db.String(20))
+    CreateDate = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'userID': self.UserID,
+            'username': self.Username,
+            'email': self.Email,
+            'phone': self.Phone,
+            'createDate': self.CreateDate.isoformat() if self.CreateDate else None
+        }
+
 class Book(db.Model):
     __tablename__ = 'books'
 

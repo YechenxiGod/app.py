@@ -13,6 +13,16 @@ CREATE TABLE admin_users (
     CreateDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
+-- 普通用户表
+CREATE TABLE users (
+    UserID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Password VARCHAR(100) NOT NULL,
+    Email VARCHAR(100),
+    Phone VARCHAR(20),
+    CreateDate DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 图书表
 CREATE TABLE books (
     BookID INT AUTO_INCREMENT PRIMARY KEY,
@@ -48,3 +58,7 @@ INSERT INTO borrow_records (BookID, BorrowerName, BorrowDate, ReturnDate, Notes)
 -- 插入管理员账号 (密码为123456)
 INSERT INTO admin_users (Username, Password) VALUES
 ('admin', '123456');
+
+-- 插入普通用户账号 (密码为123456)
+INSERT INTO users (Username, Password, Email, Phone) VALUES
+('admin', '123456', 'admin@example.com', '13800138000');
