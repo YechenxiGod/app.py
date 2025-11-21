@@ -2,11 +2,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
 }
 
 body {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -14,62 +16,91 @@ body {
     padding: 20px;
 }
 
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .login-container {
-    background: white;
-    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     width: 100%;
     max-width: 420px;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
 
 .login-container:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
 .login-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: rgba(0, 0, 0, 0.2);
     color: white;
-    padding: 30px 20px;
+    padding: 40px 20px;
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.login-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(255,255,255,0.1), transparent);
+    z-index: 0;
 }
 
 .login-header h1 {
-    font-size: 1.8rem;
-    font-weight: 500;
-    margin-bottom: 8px;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.2);
 }
 
 .login-header p {
     opacity: 0.9;
-    font-size: 0.95rem;
+    font-size: 1rem;
+    position: relative;
+    z-index: 1;
 }
 
 .login-body {
-    padding: 30px;
+    padding: 40px 30px;
+    background: rgba(255, 255, 255, 0.95);
 }
 
 .user-type-selector {
     display: flex;
-    margin-bottom: 25px;
-    border-radius: 10px;
+    margin-bottom: 30px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    background: white;
 }
 
 .user-type-btn {
     flex: 1;
-    padding: 15px;
+    padding: 18px;
     border: none;
     background: #f8f9fa;
     color: #6c757d;
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     position: relative;
     overflow: hidden;
+    font-size: 1rem;
 }
 
 .user-type-btn:first-child {
@@ -77,8 +108,9 @@ body {
 }
 
 .user-type-btn.active {
-    background: #667eea;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f);
     color: white;
+    box-shadow: 0 5px 15px rgba(26, 42, 108, 0.4);
 }
 
 .user-type-btn::after {
@@ -88,9 +120,9 @@ body {
     left: 0;
     width: 100%;
     height: 3px;
-    background: #667eea;
+    background: linear-gradient(90deg, #1a2a6c, #b21f1f);
     transform: scaleX(0);
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease;
 }
 
 .user-type-btn.active::after {
@@ -98,82 +130,99 @@ body {
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    position: relative;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     color: #495057;
     font-weight: 500;
+    font-size: 1rem;
 }
 
 .form-control {
     width: 100%;
-    padding: 14px 16px;
+    padding: 16px 20px;
     border: 2px solid #e9ecef;
-    border-radius: 10px;
+    border-radius: 12px;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
+    background: white;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
 .form-control:focus {
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    border-color: #1a2a6c;
+    box-shadow: 0 0 0 4px rgba(26, 42, 108, 0.2);
     outline: none;
+    transform: translateY(-2px);
 }
 
 .login-btn {
     width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 18px;
+    background: linear-gradient(135deg, #1a2a6c, #b21f1f);
     color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 1rem;
-    font-weight: 500;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     margin-top: 10px;
+    box-shadow: 0 5px 15px rgba(26, 42, 108, 0.4);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: all 0.6s;
 }
 
 .login-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 7px 15px rgba(102, 126, 234, 0.4);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(26, 42, 108, 0.5);
 }
 
-.login-footer {
-    text-align: center;
-    margin-top: 25px;
-    padding-top: 20px;
-    border-top: 1px solid #e9ecef;
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-
-.login-footer a {
-    color: #667eea;
-    text-decoration: none;
-    transition: color 0.2s ease;
-}
-
-.login-footer a:hover {
-    color: #764ba2;
-    text-decoration: underline;
+.login-btn:hover::before {
+    left: 100%;
 }
 
 .admin-features {
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 15px;
-    margin-top: 20px;
+    background: rgba(26, 42, 108, 0.05);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 25px;
     display: none;
+    border-left: 4px solid #1a2a6c;
+    animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .admin-features h4 {
-    color: #495057;
-    margin-bottom: 10px;
-    font-size: 1rem;
+    color: #1a2a6c;
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+}
+
+.admin-features h4::before {
+    content: "⚙️";
+    margin-right: 10px;
 }
 
 .admin-features ul {
@@ -182,17 +231,27 @@ body {
 }
 
 .admin-features li {
-    padding: 5px 0;
-    color: #6c757d;
+    padding: 8px 0;
+    color: #495057;
     display: flex;
     align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.admin-features li:hover {
+    transform: translateX(5px);
 }
 
 .admin-features li:before {
-    content: "✓";
-    color: #28a745;
-    margin-right: 8px;
+    content: "➤";
+    color: #b21f1f;
+    margin-right: 10px;
     font-weight: bold;
+    transition: transform 0.3s ease;
+}
+
+.admin-features li:hover:before {
+    transform: translateX(3px);
 }
 
 @media (max-width: 480px) {
@@ -201,20 +260,76 @@ body {
     }
     
     .login-body {
-        padding: 20px;
+        padding: 30px 20px;
     }
     
     .user-type-btn {
-        padding: 12px;
+        padding: 15px;
     }
 }
 
 /* 动画效果 */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 .login-container {
-    animation: fadeIn 0.5s ease-out;
+    animation: fadeIn 0.7s ease-out;
+}
+
+.floating-books {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.book {
+    position: absolute;
+    width: 40px;
+    height: 50px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.2), rgba(255,255,255,0.1));
+    border-radius: 3px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    animation: float 15s infinite linear;
+}
+
+.book:nth-child(1) {
+    top: 10%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.book:nth-child(2) {
+    top: 20%;
+    right: 10%;
+    animation-delay: -3s;
+}
+
+.book:nth-child(3) {
+    bottom: 20%;
+    left: 15%;
+    animation-delay: -6s;
+}
+
+.book:nth-child(4) {
+    bottom: 10%;
+    right: 15%;
+    animation-delay: -9s;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-20px) rotate(5deg);
+    }
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
 }

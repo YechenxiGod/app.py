@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (this.dataset.type === 'admin') {
                 adminFeatures.style.display = 'block';
-                adminFeatures.style.animation = 'fadeIn 0.3s ease-out';
             } else {
                 adminFeatures.style.display = 'none';
             }
