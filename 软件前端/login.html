@@ -9,19 +9,24 @@
 <body>
     <!-- 视频背景 -->
     <div class="video-background">
-        <video autoplay muted loop id="bgVideo">
-            <!-- 在这里替换您的视频路径 -->
+        <video autoplay loop muted playsinline id="bgVideo" preload="auto">
             <source src="登录界面全景.mp4" type="video/mp4">
+            <source src="登录界面全景.webm" type="video/webm">
             您的浏览器不支持视频背景。
         </video>
-        <div class="video-overlay"></div>
+        <!-- 备用背景 -->
+        <div class="video-fallback">
+            <div class="fallback-gradient"></div>
+        </div>
+        <!-- 视频加载指示器 -->
+        <div class="video-loading" id="videoLoading">
+            正在加载背景视频...
+        </div>
     </div>
     
-    <div class="floating-books">
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
-        <div class="book"></div>
+    <!-- 声音控制按钮 -->
+    <div class="sound-control" id="soundControl">
+        <span class="sound-icon">🔊</span>
     </div>
     
     <div class="login-container">
