@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from models import db, Book, BorrowRecord
+from models import db, Book, BorrowRecord, AdminUser
 from config import Config
 from datetime import datetime, date
 from sqlalchemy import func, text
@@ -20,11 +20,11 @@ def init_database():
         with app.app_context():
             # 测试连接
             db.session.execute(text('SELECT 1'))
-            print("OK 数据库连接成功")
+            print(">>> 数据库连接成功")
 
             # 创建表
             db.create_all()
-            print("OK 数据库表创建成功")
+            print(">>> 数据库表创建成功")
 
             # 插入示例数据（可选）
             if Book.query.count() == 0:
@@ -38,11 +38,19 @@ def init_database():
                 ]
                 db.session.bulk_save_objects(sample_books)
                 db.session.commit()
-                print("OK 示例数据插入成功")
+                print(">>> 示例图书数据插入成功")
+
+            # 插入默认管理员账号（如果不存在）
+            if AdminUser.query.filter_by(Username='admin').first() is None:
+                admin_user = AdminUser(Username='admin', Password='123456')
+                db.session.add(admin_user)
+                db.session.commit()
+                print(">>> 默认管理员账号创建成功")
 
     except Exception as e:
-        print(f"ERROR 数据库初始化失败: {e}")
+        print(f">>> 数据库初始化失败: {e}")
         print(traceback.format_exc())
+
 
 # 初始化数据库
 init_database()
@@ -52,6 +60,37 @@ init_database()
 @app.route('/')
 def hello():
     return jsonify({"message": "个人图书收藏管理系统 API", "status": "运行正常"})
+
+
+# 管理员登录验证
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    """管理员登录验证"""
+    try:
+        data = request.get_json()
+        username = data.get('username')
+        password = data.get('password')
+
+        if not username or not password:
+            return jsonify({"success": False, "message": "用户名和密码不能为空"}), 400
+
+        # 查询管理员用户
+        admin = AdminUser.query.filter_by(Username=username).first()
+
+        if admin and admin.Password == password:
+            return jsonify({
+                "success": True,
+                "message": "登录成功",
+                "user": admin.to_dict()
+            })
+        else:
+            return jsonify({
+                "success": False,
+                "message": "账号/密码错误或不存在"
+            }), 401
+
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
 
 
 @app.route('/api/books', methods=['GET'])
@@ -223,6 +262,7 @@ def return_book(record_id):
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/books/stats/summary', methods=['GET'])
 def get_summary_stats():

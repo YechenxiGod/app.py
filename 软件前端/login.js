@@ -58,24 +58,44 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        // 这里添加实际的登录验证逻辑
-        console.log(`用户类型: ${userType}, 用户名: ${username}, 密码: ${password}`);
-        
-        // 模拟登录成功
-        alert(`登录成功！欢迎${userType === 'admin' ? '管理员' : '普通用户'}：${username}`);
-        
-        // 根据用户类型跳转到不同页面
-        // 实际应用中这里应该跳转到主页面
+        // 如果是管理员登录，验证管理员账号
         if (userType === 'admin') {
-            // 管理员跳转到管理页面
-            // window.location.href = 'admin.html';
-            alert('将跳转到管理员页面');
+            verifyAdminLogin(username, password);
         } else {
-            // 普通用户跳转到用户页面
-            // window.location.href = 'index.html';
-            alert('将跳转到普通用户页面');
+            // 普通用户登录逻辑（这里可以根据需要扩展）
+            alert('普通用户登录功能暂未开放');
         }
     });
+    
+    // 验证管理员登录
+    async function verifyAdminLogin(username, password) {
+        try {
+            const response = await fetch('http://localhost:5000/api/admin/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                // 登录成功，跳转到主页面
+                alert('登录成功！欢迎管理员：' + username);
+                window.location.href = 'index.html';
+            } else {
+                // 登录失败，显示错误信息
+                alert(result.message || '登录失败，请检查用户名和密码');
+            }
+        } catch (error) {
+            console.error('登录请求失败:', error);
+            alert('登录请求失败，请检查网络连接或后端服务');
+        }
+    }
     
     // 添加输入框回车提交支持
     document.getElementById('password').addEventListener('keypress', function(e) {

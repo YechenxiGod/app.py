@@ -3,8 +3,23 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
+class AdminUser(db.Model):
+    __tablename__ = 'admin_users'
+
+    AdminID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Username = db.Column(db.String(50), nullable=False, unique=True)
+    Password = db.Column(db.String(100), nullable=False)
+    CreateDate = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def to_dict(self):
+        return {
+            'adminID': self.AdminID,
+            'username': self.Username,
+            'createDate': self.CreateDate.isoformat() if self.CreateDate else None
+        }
+
 class Book(db.Model):
-    __tablename__ = 'books'  # MySQL 表名通常用小写
+    __tablename__ = 'books'
 
     BookID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     ISBN = db.Column(db.String(20), nullable=False)
@@ -31,7 +46,7 @@ class Book(db.Model):
         }
 
 class BorrowRecord(db.Model):
-    __tablename__ = 'borrow_records'  # MySQL 表名通常用小写
+    __tablename__ = 'borrow_records'
 
     RecordID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     BookID = db.Column(db.Integer, db.ForeignKey('books.BookID'), nullable=False)

@@ -5,6 +5,14 @@ DEFAULT COLLATE utf8mb4_unicode_ci;
 
 USE BookCollectionDB;
 
+-- 管理员表
+CREATE TABLE admin_users (
+    AdminID INT AUTO_INCREMENT PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL UNIQUE,
+    Password VARCHAR(100) NOT NULL,
+    CreateDate DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- 图书表
 CREATE TABLE books (
     BookID INT AUTO_INCREMENT PRIMARY KEY,
@@ -36,3 +44,7 @@ INSERT INTO books (ISBN, Title, Author, Publisher, Category, Status) VALUES
 
 INSERT INTO borrow_records (BookID, BorrowerName, BorrowDate, ReturnDate, Notes) VALUES
 (2, '王五', '2024-01-15', NULL, '课程参考书');
+
+-- 插入管理员账号 (密码为123456)
+INSERT INTO admin_users (Username, Password) VALUES
+('admin', '123456');
