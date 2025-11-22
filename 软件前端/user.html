@@ -7,6 +7,15 @@
     <link rel="stylesheet" href="user.css">
 </head>
 <body>
+    <!-- 背景容器 - 您可以在这里添加视频或图片 -->
+    <div class="background-container">
+        <video class="background-video" autoplay muted loop id="bgVideo">
+            <source src="奈克瑟斯.mp4" type="video/mp4">
+            您的浏览器不支持视频标签。
+        </video>
+        <div class="background-overlay"></div>
+    </div>
+
     <div class="app-header">
         <h1>图书馆用户中心</h1>
     </div>
@@ -126,7 +135,7 @@
             
             <div style="margin-top: 20px;">
                 <h3>借阅记录</h3>
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                <div class="profile-section" style="border-left-color: #28a745;">
                     <p>当前借阅：2本</p>
                     <p>历史借阅：15本</p>
                 </div>
@@ -134,14 +143,14 @@
             
             <div style="margin-top: 20px;">
                 <h3>收藏图书</h3>
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                <div class="profile-section" style="border-left-color: #ffc107;">
                     <p>收藏数量：5本</p>
                 </div>
             </div>
             
             <div style="margin-top: 20px;">
                 <h3>我的评论</h3>
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-top: 10px;">
+                <div class="profile-section" style="border-left-color: #17a2b8;">
                     <p>已发布评论：8条</p>
                 </div>
             </div>
@@ -149,6 +158,7 @@
     </div>
 
     <button class="logout-btn" onclick="logout()">退出登录</button>
+    <button class="video-control" id="videoToggle">暂停背景</button>
 
     <script src="user.js"></script>
 </body>
