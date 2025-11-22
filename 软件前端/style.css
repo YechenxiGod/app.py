@@ -1,4 +1,4 @@
-/* 将所有CSS内联到HTML中 */
+/* 动漫与特摄剧管理系统 - 主样式表 */
 * {
     margin: 0;
     padding: 0;
@@ -163,7 +163,7 @@ button {
     color: white;
 }
 
-.book-list {
+.resource-list {
     background: white;
     padding: 25px;
     border-radius: 12px;
@@ -197,11 +197,13 @@ th {
 .status.available {
     background-color: #d4edda;
     color: #155724;
+    /* 动漫资源可用状态 */
 }
 
 .status.borrowed {
     background-color: #f8d7da;
     color: #721c24;
+    /* 动漫资源借用状态 */
 }
 
 .modal-overlay {

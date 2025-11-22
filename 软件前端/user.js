@@ -1,4 +1,4 @@
-// 卡片点击功能 - 从1.txt中提取的交互模式
+// 动漫与特摄剧管理系统 - 卡片点击功能
 document.querySelectorAll('.feature-card').forEach(card => {
     card.addEventListener('click', function() {
         const cardId = this.id;
@@ -13,28 +13,28 @@ document.querySelectorAll('.feature-card').forEach(card => {
             this.style.transition = '';
             
             // 显示通知
-            showNotification(`正在进入${cardTitle}...`);
+            showNotification(`正在进入${cardTitle}功能...`);
             
             // 这里可以添加跳转逻辑
             switch(cardId) {
                 case 'home':
-                    console.log('首页功能');
+                    console.log('动漫与特摄剧首页功能');
                     break;
                 case 'categories':
-                    console.log('分类功能');
+                    console.log('动漫与特摄剧分类浏览功能');
                     break;
                 case 'forum':
-                    console.log('论坛功能');
+                    console.log('动漫与特摄剧讨论社区功能');
                     break;
                 case 'profile':
-                    console.log('个人中心功能');
+                    console.log('个人收藏与观看历史功能');
                     break;
             }
         }, 200);
     });
 })
 
-// 退出登录功能
+// 动漫与特摄剧管理系统 - 退出登录功能
 function logout() {
     if (confirm('确定要退出登录吗？')) {
         // 添加退出动画
@@ -49,13 +49,13 @@ function logout() {
 
 // 背景视频将自动播放且无需控制按钮
 
-// 背景管理器 - 支持图片背景和视频背景的切换方案
+// 动漫与特摄剧管理系统 - 背景管理器
 class BackgroundManager {
     constructor() {
         // 初始化背景切换机制
         this.initializeBackgroundSwitch();
         
-        // 初始化卡片背景图片
+        // 初始化动漫与特摄剧相关卡片背景图片
         this.initializeCardBackgrounds();
     }
 
@@ -153,12 +153,12 @@ class BackgroundManager {
 
     // 初始化卡片背景图片
     initializeCardBackgrounds() {
-        // 为四个卡片分别设置背景图片
+        // 为四个卡片分别设置动漫与特摄剧相关背景图片
         const cardBackgrounds = [
-            { id: 'home-bg', image: '【哲风壁纸】动漫-灰原.png' },         // 首页卡片背景
-            { id: 'categories-bg', image: '【哲风壁纸】名侦探柯南-灰原哀.png' }, // 分类卡片背景
-            { id: 'forum-bg', image: '【哲风壁纸】可爱-名侦探柯南.png' },         // 论坛卡片背景
-            { id: 'profile-bg', image: '【哲风壁纸】二次元-名侦探柯南.png' }      // 我的卡片背景
+            { id: 'home-bg', image: '【哲风壁纸】动漫-灰原.png' },         // 动漫首页卡片背景
+            { id: 'categories-bg', image: '【哲风壁纸】名侦探柯南-灰原哀.png' }, // 分类浏览卡片背景
+            { id: 'forum-bg', image: '【哲风壁纸】可爱-名侦探柯南.png' },         // 动漫讨论社区卡片背景
+            { id: 'profile-bg', image: '【哲风壁纸】二次元-名侦探柯南.png' }      // 个人收藏卡片背景
         ];
 
         // 设置每个卡片的背景图片
@@ -215,14 +215,14 @@ class BackgroundManager {
     }
 }
 
-// 导出BackgroundManager类，以便在其他页面使用
+// 导出BackgroundManager类，供动漫与特摄剧管理系统其他页面使用
 window.BackgroundManager = BackgroundManager;
 
 // 在当前页面初始化背景管理器
 const backgroundManager = new BackgroundManager();
 
 /**
- * 使用说明：如何使用视频背景和卡片背景图片效果
+ * 动漫与特摄剧管理系统 - 使用说明：如何使用视频背景和卡片背景图片效果
  * 
  * 1. 视频背景设置：
  *    - 在页面中添加以下HTML结构：
@@ -257,10 +257,10 @@ const backgroundManager = new BackgroundManager();
  * 6. 确保在CSS中包含相关样式（已在user.css中定义）
  */
 
-// 页面加载时显示用户信息
+// 动漫与特摄剧管理系统 - 页面加载时初始化用户界面
 document.addEventListener('DOMContentLoaded', function() {
-    // 这里可以添加从后端获取用户信息的代码
-    console.log('用户页面加载完成');
+    // 这里可以添加从后端获取用户信息和动漫与特摄剧资源的代码
+    console.log('动漫与特摄剧管理系统用户界面加载完成');
     
     // 添加页面加载动画
     document.body.style.opacity = '0';
@@ -274,13 +274,13 @@ document.addEventListener('DOMContentLoaded', function() {
     addInteractiveFeatures();
 });
 
-// 添加交互功能 - 从1.txt中提取的现代交互设计理念
+// 动漫与特摄剧管理系统 - 添加交互功能
 function addInteractiveFeatures() {
     // 为卡片添加触摸反馈效果
     const cards = document.querySelectorAll('.feature-card');
     
     cards.forEach(card => {
-        // 添加鼠标悬停时的阴影过渡效果（从1.txt中提取的高级阴影效果）
+        // 添加鼠标悬停时的阴影过渡效果
         card.addEventListener('mouseenter', function() {
             this.style.boxShadow = '0 16px 48px 16px rgba(90, 120, 232, 0.14), 0 12px 32px rgba(90, 120, 232, 0.19), 0 8px 16px -8px rgba(90, 120, 232, 0.29)';
         });
@@ -289,7 +289,7 @@ function addInteractiveFeatures() {
             this.style.boxShadow = '';
         });
         
-        // 添加键盘焦点样式（从1.txt中提取的无障碍设计）
+        // 添加键盘焦点样式
         card.addEventListener('focus', function() {
             this.style.outline = '2px solid var(--accent-color)';
             this.style.outlineOffset = '4px';
@@ -302,13 +302,13 @@ function addInteractiveFeatures() {
     });
 }
 
-// 显示通知 - 从1.txt中提取的高级UI设计
+// 动漫与特摄剧管理系统 - 显示通知功能
 function showNotification(message) {
     // 创建通知元素
     const notification = document.createElement('div');
     notification.textContent = message;
     
-    // 使用从1.txt提取的现代通知样式
+    // 使用现代通知样式
     notification.style.cssText = `
         position: fixed;
         top: 20px;
@@ -368,10 +368,10 @@ function showNotification(message) {
     }, 3000);
 }
 
-// 添加键盘快捷键 - 从1.txt中提取的高级交互设计
+// 动漫与特摄剧管理系统 - 添加键盘快捷键支持
 document.addEventListener('keydown', function(e) {
     // 数字键1-4直接激活对应的卡片功能
-    const cards = ['home', 'categories', 'forum', 'profile'];
+    const cards = ['home', 'categories', 'forum', 'profile']; // 动漫与特摄剧管理系统主要功能卡片
     const index = parseInt(e.key) - 1;
     
     if (index >= 0 && index < cards.length) {
@@ -391,7 +391,7 @@ document.addEventListener('keydown', function(e) {
         const homeCard = document.getElementById('home');
         if (homeCard) {
             homeCard.focus();
-            showNotification('返回首页');
+            showNotification('返回动漫与特摄剧首页');
         }
     }
 });

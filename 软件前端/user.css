@@ -1,3 +1,4 @@
+/* 动漫与特摄剧管理系统 - 用户页面样式表 */
 * {
     margin: 0;
     padding: 0;
@@ -141,14 +142,16 @@ p {
     line-height: 1.6;
 }
 
-.book-grid {
+.resource-grid {
+    /* 动漫与特摄剧资源网格布局 */
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     margin-top: 20px;
 }
 
-.book-card {
+.resource-card {
+    /* 动漫与特摄剧资源卡片 */
     background: rgba(0, 0, 0, 0.05);
     padding: 20px;
     border-radius: 10px;
@@ -180,19 +183,22 @@ p {
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
 }
 
-.book-title {
+.resource-title {
+    /* 动漫与特摄剧资源标题 */
     font-size: 1.2rem;
     font-weight: bold;
     margin-bottom: 8px;
     color: var(--text-color);
 }
 
-.book-author {
+.resource-creator {
+    /* 动漫与特摄剧创作者 */
     color: #666;
     margin-bottom: 5px;
 }
 
-.book-category {
+.resource-category {
+    /* 动漫与特摄剧类型 */
     color: var(--accent-color);
     font-size: 0.9rem;
     font-weight: 500;
@@ -376,7 +382,7 @@ p {
         flex-direction: column;
     }
     
-    .book-grid {
+    .resource-grid {
         grid-template-columns: 1fr;
     }
     

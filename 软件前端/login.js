@@ -1,3 +1,4 @@
+// 动漫与特摄剧管理系统 - 登录页面脚本
 document.addEventListener('DOMContentLoaded', function() {
     const userTypeBtns = document.querySelectorAll('.user-type-btn');
     const adminFeatures = document.getElementById('adminFeatures');
@@ -83,16 +84,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             
             if (result.success) {
-                // 登录成功，跳转到主页面
-                alert('登录成功！欢迎管理员：' + username);
+                // 登录成功，跳转到管理员主页面
+                alert('登录成功！欢迎动漫与特摄剧系统管理员：' + username);
                 window.location.href = 'index.html';
             } else {
                 // 登录失败，显示错误信息
                 alert(result.message || '登录失败，请检查用户名和密码');
             }
         } catch (error) {
-            console.error('登录请求失败:', error);
-            alert('登录请求失败，请检查网络连接或后端服务');
+            console.error('动漫与特摄剧管理系统 - 登录请求失败:', error);
+            alert('登录请求失败，请检查网络连接或动漫与特摄剧管理系统服务');
         }
     }
     
@@ -114,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (result.success) {
                 // 登录成功，跳转到用户主页面
-                alert('登录成功！欢迎用户：' + username);
+                alert('登录成功！欢迎动漫与特摄剧爱好者：' + username);
                 window.location.href = 'user.html';
             } else {
                 // 登录失败，显示错误信息
@@ -144,8 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (playPromise !== undefined) {
             playPromise.then(function() {
-                // 视频播放成功
-                console.log('有声音视频播放成功');
+                // 动漫背景视频播放成功
+                console.log('动漫背景视频播放成功');
                 videoLoading.style.display = 'none';
                 interactionHint.classList.add('hidden');
                 
@@ -153,8 +154,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 soundVideo.volume = 0.5;
                 soundVideo.muted = isMuted;
             }).catch(function(error) {
-                // 播放被阻止
-                console.log('有声音视频播放被阻止:', error);
+                // 动漫背景视频播放被阻止
+                console.log('动漫背景视频播放被阻止:', error);
                 showFallbackBackground();
             });
         }
@@ -177,39 +178,39 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 静音视频加载成功事件
         mutedVideo.addEventListener('loadeddata', function() {
-            console.log('静音视频数据已加载');
+            console.log('动漫背景静音视频数据已加载');
             videoLoading.style.display = 'none';
             videoFallback.style.display = 'none';
         });
         
         // 有声音视频加载成功事件
         soundVideo.addEventListener('loadeddata', function() {
-            console.log('有声音视频数据已加载');
+            console.log('动漫背景有声音视频数据已加载');
         });
         
         // 视频错误处理
         mutedVideo.addEventListener('error', function(e) {
-            console.error('静音视频加载错误:', e);
+            console.error('动漫背景静音视频加载错误:', e);
             videoLoading.style.display = 'none';
             showFallbackBackground();
         });
         
         soundVideo.addEventListener('error', function(e) {
-            console.error('有声音视频加载错误:', e);
+            console.error('动漫背景有声音视频加载错误:', e);
         });
         
         // 视频播放结束重新开始
         mutedVideo.addEventListener('ended', function() {
             mutedVideo.currentTime = 0;
             mutedVideo.play().catch(e => {
-                console.log('静音视频循环播放失败:', e);
+                console.log('动漫背景静音视频循环播放失败:', e);
             });
         });
         
         soundVideo.addEventListener('ended', function() {
             soundVideo.currentTime = 0;
             soundVideo.play().catch(e => {
-                console.log('有声音视频循环播放失败:', e);
+                console.log('动漫背景有声音视频循环播放失败:', e);
             });
         });
         
@@ -222,12 +223,12 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (playPromise !== undefined) {
             playPromise.then(function() {
-                // 静音视频播放成功
-                console.log('静音视频自动播放成功');
+                // 动漫背景静音视频播放成功
+                console.log('动漫背景静音视频自动播放成功');
                 videoLoading.style.display = 'none';
             }).catch(function(error) {
-                // 自动播放被阻止
-                console.log('静音视频自动播放被阻止:', error);
+                // 动漫背景静音视频自动播放被阻止
+                console.log('动漫背景静音视频自动播放被阻止:', error);
                 videoLoading.style.display = 'none';
                 showFallbackBackground();
             });
@@ -235,7 +236,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function showFallbackBackground() {
-        console.log('启用备用背景');
+        console.log('启用动漫主题备用背景');
         mutedVideo.style.display = 'none';
         soundVideo.style.display = 'none';
         videoFallback.style.display = 'block';
@@ -263,11 +264,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!document.hidden) {
             if (videoSwitched && soundVideo.paused) {
                 soundVideo.play().catch(function(e) {
-                    console.log('页面恢复后有声音视频播放失败:', e);
+                    console.log('页面恢复后动漫背景有声音视频播放失败:', e);
                 });
             } else if (!videoSwitched && mutedVideo.paused) {
                 mutedVideo.play().catch(function(e) {
-                    console.log('页面恢复后静音视频播放失败:', e);
+                    console.log('页面恢复后动漫背景静音视频播放失败:', e);
                 });
             }
         }
