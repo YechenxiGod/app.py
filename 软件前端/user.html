@@ -7,10 +7,12 @@
     <link rel="stylesheet" href="user.css">
 </head>
 <body>
-    <!-- 背景容器 - 视频背景 -->
-    <!-- 使用Super爱豆的笑容都没你的甜 _ _ 热爱105℃的灰原哀.mp4作为背景视频并启用声音 -->
+    <!-- 背景容器 - 默认显示图片背景，交互后切换到视频背景 -->
     <div class="background-container">
-        <video class="background-video" id="bgVideo" autoplay muted loop playsinline>
+        <!-- 背景图片 - 默认显示 -->
+        <div class="background-image" id="bgImage" style="background-image: url('【哲风壁纸】个性插画-二次元角色.png');"></div>
+        <!-- 背景视频 - 默认隐藏 -->
+        <video class="background-video" id="bgVideo" muted loop playsinline style="display: none;">
             <source src="Super爱豆的笑容都没你的甜 _ _ 热爱105℃的灰原哀.mp4" type="video/mp4">
         </video>
         <div class="background-overlay"></div>

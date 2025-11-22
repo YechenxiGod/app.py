@@ -49,49 +49,113 @@ function logout() {
 
 // 背景视频将自动播放且无需控制按钮
 
-// 背景管理器 - 支持视频背景和卡片背景图片的组合方案
+// 背景管理器 - 支持图片背景和视频背景的切换方案
 class BackgroundManager {
     constructor() {
-        // 初始化视频背景
-        this.initializeVideoBackground();
+        // 初始化背景切换机制
+        this.initializeBackgroundSwitch();
         
         // 初始化卡片背景图片
         this.initializeCardBackgrounds();
     }
 
-    // 初始化视频背景（带声音）
-    initializeVideoBackground() {
-        const videoElement = document.getElementById('bgVideo');
-        if (!videoElement) return;
-
+    // 初始化背景切换机制
+    initializeBackgroundSwitch() {
+        // 获取背景元素
+        this.bgImage = document.getElementById('bgImage');
+        this.bgVideo = document.getElementById('bgVideo');
+        
+        if (!this.bgImage || !this.bgVideo) return;
+        
         // 设置视频属性
-        videoElement.muted = false; // 启用声音
-        videoElement.loop = true;
-        videoElement.autoplay = true;
-        videoElement.playsInline = true;
-
-        // 尝试恢复视频播放（如果浏览器暂停了自动播放）
-        videoElement.play().then(() => {
-            console.log('背景视频播放成功，声音已启用');
-        }).catch(error => {
-            console.log('背景视频自动播放受限，尝试用户交互后播放:', error);
-            // 添加用户交互后自动播放的事件监听器
-            this.setupUserInteractionPlay(videoElement);
+        this.bgVideo.muted = false; // 启用声音
+        this.bgVideo.loop = true;
+        this.bgVideo.playsInline = true;
+        
+        // 添加视频加载失败处理
+        this.bgVideo.addEventListener('error', () => {
+            this.handleVideoError();
         });
-
-        // 视频加载失败处理
-        videoElement.addEventListener('error', () => {
-            console.log('背景视频加载失败，将使用备用样式');
-            this.applyFallbackVideoBackground();
-        });
-
+        
+        // 添加用户交互监听器来切换背景
+        this.setupInteractionSwitch();
+        
         // 响应式调整
         window.addEventListener('resize', () => {
-            this.optimizeVideoForScreen(videoElement);
+            this.optimizeBackgroundForScreen();
         });
-
+        
         // 初始优化
-        this.optimizeVideoForScreen(videoElement);
+        this.optimizeBackgroundForScreen();
+    }
+    
+    // 设置交互切换背景
+    setupInteractionSwitch() {
+        const handleInteraction = () => {
+            // 如果还没有切换到视频背景
+            if (this.bgVideo.style.display === 'none') {
+                this.switchToVideoBackground();
+                // 移除事件监听器，防止重复切换
+                document.removeEventListener('click', handleInteraction);
+                document.removeEventListener('keydown', handleInteraction);
+            }
+        };
+        
+        // 添加多种交互方式的监听器
+        document.addEventListener('click', handleInteraction);
+        document.addEventListener('keydown', handleInteraction);
+        
+        // 为卡片添加交互
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', handleInteraction);
+        });
+    }
+    
+    // 切换到视频背景
+    switchToVideoBackground() {
+        console.log('切换到视频背景');
+        
+        // 淡出图片背景
+        this.bgImage.style.opacity = '0';
+        
+        // 显示并播放视频
+        this.bgVideo.style.display = 'block';
+        this.bgVideo.play().then(() => {
+            console.log('视频背景播放成功');
+            // 完全隐藏图片背景
+            setTimeout(() => {
+                this.bgImage.style.display = 'none';
+            }, 800);
+        }).catch(error => {
+            console.log('视频播放失败:', error);
+            // 恢复图片背景
+            this.bgImage.style.opacity = '1';
+        });
+    }
+    
+    // 根据屏幕尺寸优化背景
+    optimizeBackgroundForScreen() {
+        const isMobile = window.innerWidth <= 768;
+        
+        // 优化图片背景
+        if (this.bgImage) {
+            if (isMobile) {
+                this.bgImage.style.transform = 'scale(1.1)';
+            } else {
+                this.bgImage.style.transform = 'scale(1)';
+            }
+        }
+        
+        // 优化视频背景
+        if (this.bgVideo) {
+            if (isMobile) {
+                this.bgVideo.style.width = '120%';
+                this.bgVideo.style.height = '120%';
+            } else {
+                this.bgVideo.style.width = '100%';
+                this.bgVideo.style.height = '100%';
+            }
+        }
     }
 
     // 初始化卡片背景图片
@@ -137,41 +201,20 @@ class BackgroundManager {
         };
     }
 
-    // 设置用户交互后播放视频
-    setupUserInteractionPlay(videoElement) {
-        const playVideo = () => {
-            videoElement.play().then(() => {
-                console.log('通过用户交互恢复视频播放');
-                // 移除事件监听器
-                document.removeEventListener('click', playVideo);
-                document.removeEventListener('keydown', playVideo);
-            }).catch(error => {
-                console.log('恢复视频播放失败:', error);
-            });
-        };
-
-        // 添加事件监听器
-        document.addEventListener('click', playVideo);
-        document.addEventListener('keydown', playVideo);
-    }
-
-    // 根据屏幕尺寸优化视频
-    optimizeVideoForScreen(videoElement) {
-        const isMobile = window.innerWidth <= 768;
-        
-        if (isMobile) {
-            // 移动设备上优化性能
-            videoElement.style.width = '120%'; // 覆盖整个屏幕
-            videoElement.style.height = '120%';
-        } else {
-            // 桌面设备优化视觉效果
-            videoElement.style.width = '100%';
-            videoElement.style.height = '100%';
+    // 视频加载失败处理
+    handleVideoError() {
+        console.log('视频加载失败，继续使用图片背景');
+        if (this.bgVideo) {
+            this.bgVideo.style.display = 'none';
+        }
+        if (this.bgImage) {
+            this.bgImage.style.display = 'block';
+            this.bgImage.style.opacity = '1';
         }
     }
 
-    // 应用视频后备背景样式
-    applyFallbackVideoBackground() {
+    // 应用后备背景样式
+    applyFallbackBackground() {
         const container = document.querySelector('.background-container');
         if (container) {
             container.style.background = 'linear-gradient(135deg, var(--accent-color), var(--secondary-color))';
