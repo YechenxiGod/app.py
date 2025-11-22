@@ -97,18 +97,11 @@ class BackgroundManager {
                 this.switchToVideoBackground();
                 // 移除事件监听器，防止重复切换
                 document.removeEventListener('click', handleInteraction);
-                document.removeEventListener('keydown', handleInteraction);
             }
         };
         
-        // 添加多种交互方式的监听器
+        // 只添加鼠标点击触发
         document.addEventListener('click', handleInteraction);
-        document.addEventListener('keydown', handleInteraction);
-        
-        // 为卡片添加交互
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mouseenter', handleInteraction);
-        });
     }
     
     // 切换到视频背景
