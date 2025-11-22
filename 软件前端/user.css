@@ -30,6 +30,30 @@
     --secondary-color: #7b57c7;
     --border-color: rgba(0, 0, 0, 0.08);
     --hover-bg-color: rgba(0, 0, 0, 0.05);
+    
+    /* 从1.txt中提取的Element UI设计系统变量 */
+    --el-color-white: #fff;
+    --el-color-black: #000;
+    --el-color-primary: #409eff;
+    --el-color-primary-light-3: #79bbff;
+    --el-color-primary-light-5: #a0cfff;
+    --el-color-primary-light-7: #c6e2ff;
+    --el-color-primary-light-8: #d9ecff;
+    --el-color-primary-light-9: #ecf5ff;
+    --el-color-primary-dark-2: #337ecc;
+    --el-color-success: #67c23a;
+    --el-color-warning: #e6a23c;
+    --el-color-danger: #f56c6c;
+    --el-color-info: #909399;
+    --el-font-size-base: 14px;
+    --el-font-weight-primary: 500;
+    --el-index-popper: 2000;
+    --el-border-radius-base: 4px;
+    --el-border-radius-round: 20px;
+    --el-transition-duration: .3s;
+    --el-transition-function-ease-in-out-bezier: cubic-bezier(.645, .045, .355, 1);
+    --el-box-shadow: 0px 12px 32px 4px #0000000a, 0px 8px 20px #00000014;
+    --el-box-shadow-dark: 0px 16px 48px 16px #00000014, 0px 12px 32px #0000001f, 0px 8px 16px -8px #00000029;
 }
 
 body {
@@ -40,7 +64,7 @@ body {
 }
 
 .app-header {
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255, 255, 255, 0.6);
     padding: 1rem 0;
     text-align: center;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -53,7 +77,7 @@ body {
 }
 
 .user-info {
-    background: var(--card-bg-color);
+    background: rgba(255, 255, 255, 0.6);
     margin: 20px;
     padding: 20px;
     border-radius: 12px;
@@ -99,59 +123,7 @@ body {
     font-size: 1.1rem;
 }
 
-.nav-tabs {
-    display: flex;
-    background: var(--card-bg-color);
-    margin: 0 20px;
-    border-radius: 12px 12px 0 0;
-    overflow: hidden;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    border: 1px solid var(--border-color);
-    border-bottom: none;
-}
-
-.nav-tab {
-    flex: 1;
-    padding: 15px;
-    text-align: center;
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 1rem;
-    font-weight: 500;
-    color: var(--text-color);
-}
-
-.nav-tab:hover {
-    background: var(--hover-bg-color);
-}
-
-.nav-tab.active {
-    background: var(--accent-color);
-    color: white;
-    border-bottom: 3px solid var(--secondary-color);
-}
-
-.content-area {
-    background: var(--card-bg-color);
-    margin: 0 20px 20px 20px;
-    padding: 25px;
-    border-radius: 0 0 12px 12px;
-    min-height: 400px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    border: 1px solid var(--border-color);
-    border-top: none;
-}
-
-.tab-content {
-    display: none;
-}
-
-.tab-content.active {
-    display: block;
-    animation: fadeIn 0.5s ease;
-}
+/* 卡片样式已经优化完成 */
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -337,14 +309,30 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
     overflow: hidden;
+    z-index: -1;
 }
 
-.background-video, .background-image {
-    width: 100%;
-    height: 100%;
+/* 背景视频样式 */
+.background-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
     object-fit: cover;
+    filter: brightness(0.8) saturate(1.2);
+    transition: filter 0.5s ease, transform 0.5s ease;
+    will-change: transform, filter;
+}
+
+/* 鼠标悬停时增强背景视频效果 */
+.background-container:hover .background-video {
+    transform: translate(-50%, -50%) scale(1.02);
+    filter: brightness(0.9) saturate(1.3);
 }
 
 .background-overlay {
@@ -356,24 +344,7 @@ p {
     background: rgba(255, 255, 255, 0.1);
 }
 
-/* 视频控制按钮 */
-.video-control {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.85);
-    color: #333;
-    border: 1px solid rgba(0,0,0,0.1);
-    padding: 10px 15px;
-    border-radius: 8px;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
-}
 
-.video-control:hover {
-    background: rgba(60, 60, 60, 0.9);
-}
 
 @media (max-width: 768px) {
     .user-details {
@@ -397,15 +368,297 @@ p {
     }
 }
 
-/* 添加一些动画效果 */
-@keyframes slideInFromLeft {
+/* 主内容区域样式 */
+.main-content {
+    min-height: calc(100vh - 140px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+/* 卡片容器样式 */
+.card-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    width: 100%;
+}
+
+/* 功能卡片样式 */
+.feature-card {
+    position: relative;
+    border-radius: var(--el-border-radius-round);
+    text-align: center;
+    cursor: pointer;
+    transition: all var(--el-transition-duration) var(--el-transition-function-ease-in-out-bezier);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: var(--el-box-shadow);
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    will-change: transform, box-shadow;
+    perspective: 1000px;
+    transform-style: preserve-3d;
+}
+
+/* 从1.txt中提取的高级悬停特效 */
+.feature-card:hover {
+    transform: translateY(-10px) translateZ(5px) scale(1.03);
+    box-shadow: var(--el-box-shadow-dark);
+    background: linear-gradient(135deg, var(--el-color-white), var(--el-color-primary-light-9));
+    border-color: var(--el-color-primary-light-5);
+}
+
+/* 从1.txt中提取的卡片深度效果 */
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%);
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* 从1.txt中提取的卡片边框发光效果 */
+.feature-card:hover::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: var(--el-border-radius-round);
+    background: linear-gradient(45deg, var(--el-color-primary-light-5), var(--el-color-primary), var(--el-color-primary-light-5));
+    z-index: -1;
+    animation: borderGlow 2s ease-in-out infinite;
+}
+
+/* 卡片悬浮效果 */
+.feature-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 15px 40px rgba(90, 120, 232, 0.2);
+    border-color: var(--accent-color);
+}
+
+/* 卡片背景图片样式 */
+.card-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.7) saturate(1.2);
+    transition: transform 0.5s ease, filter 0.5s ease;
+    will-change: transform, filter;
+    z-index: 0;
+}
+
+/* 卡片内容容器 */
+.card-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    background: transparent;
+    border-radius: var(--el-border-radius-round);
+    width: 100%;
+    height: 100%;
+    transition: background-color 0.3s ease;
+}
+
+/* 卡片悬停时背景图片效果 */
+.feature-card:hover .card-background {
+    transform: scale(1.1);
+    filter: brightness(0.8) saturate(1.3);
+}
+
+/* 卡片悬停时内容背景效果 */
+.feature-card:hover .card-content {
+    background: transparent;
+}
+
+/* 卡片图标样式 */
+.card-icon {
+    font-size: 50px;
+    margin-bottom: 20px;
+    color: var(--accent-color);
+    transition: transform 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+/* 从1.txt中提取的卡片图标悬停效果 */
+.feature-card:hover .card-icon {
+    transform: scale(1.2) rotate(10deg);
+}
+
+/* 从1.txt中提取的卡片文字样式 */
+.feature-card h3 {
+    position: relative;
+    z-index: 1;
+    font-weight: var(--el-font-weight-primary);
+    margin-bottom: 10px;
+    color: var(--el-color-primary);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover h3 {
+    color: var(--el-color-primary-dark-2);
+    transform: translateY(-2px);
+}
+
+.feature-card p {
+    position: relative;
+    z-index: 1;
+    color: var(--el-color-info);
+    font-size: var(--el-font-size-base);
+    margin: 0;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover p {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+/* 从1.txt中提取的边框发光动画 */
+@keyframes borderGlow {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.7;
+    }
+    50% {
+        transform: scale(1.03);
+        opacity: 0.9;
+    }
+}
+
+.feature-card:hover .card-icon {
+    transform: scale(1.1) rotate(5deg);
+}
+
+/* 卡片标题样式 */
+.feature-card h3 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+    color: white;
+    font-weight: 700;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.5);
+    letter-spacing: 0.5px;
+}
+
+/* 卡片描述样式 */
+.feature-card p {
+    color: white;
+    font-size: 1.2rem;
+    line-height: 1.5;
+    margin: 0;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8), 0 0 8px rgba(255, 255, 255, 0.4);
+    letter-spacing: 0.3px;
+}
+
+/* 卡片背景装饰 */
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(90, 120, 232, 0.05) 0%, transparent 70%);
+    transform: rotate(30deg);
+    transition: opacity 0.3s ease;
+    opacity: 0;
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+/* 加载动画效果 - 从1.txt中提取 */
+@keyframes fadeInUp {
     from {
         opacity: 0;
-        transform: translateX(-50px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
-        transform: translateX(0);
+        transform: translateY(0);
+    }
+}
+
+/* 从1.txt中提取的卡片加载动画 */
+@keyframes cardLoad {
+    0% {
+        opacity: 0;
+        transform: translateY(40px) scale(0.9);
+    }
+    60% {
+        opacity: 0.8;
+        transform: translateY(-10px) scale(1.02);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 卡片加载动画应用 */
+.feature-card {
+    animation: cardLoad 0.6s cubic-bezier(0.215, 0.61, 0.355, 1) backwards;
+}
+
+/* 为每个卡片设置延迟动画 */
+#home {
+    animation-delay: 0.1s;
+}
+
+#categories {
+    animation-delay: 0.2s;
+}
+
+#forum {
+    animation-delay: 0.3s;
+}
+
+#profile {
+    animation-delay: 0.4s;
+}
+
+/* 从1.txt中提取的加载骨架效果 */
+.card-skeleton {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    animation: shimmer 1.5s infinite;
+    pointer-events: none;
+    z-index: 10;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
     }
 }
 
@@ -413,14 +666,122 @@ p {
     animation: slideInFromLeft 0.6s ease-out;
 }
 
-.user-info {
-    animation: slideInFromLeft 0.6s ease-out 0.1s both;
+.card-container .feature-card:nth-child(1) {
+    animation: fadeInUp 0.6s ease-out 0.1s both;
 }
 
-.nav-tabs {
-    animation: slideInFromLeft 0.6s ease-out 0.2s both;
+.card-container .feature-card:nth-child(2) {
+    animation: fadeInUp 0.6s ease-out 0.2s both;
 }
 
-.content-area {
-    animation: slideInFromLeft 0.6s ease-out 0.3s both;
+.card-container .feature-card:nth-child(3) {
+    animation: fadeInUp 0.6s ease-out 0.3s both;
+}
+
+.card-container .feature-card:nth-child(4) {
+    animation: fadeInUp 0.6s ease-out 0.4s both;
+}
+
+/* 响应式设计优化 - 从1.txt中提取 */
+/* 移动设备 - 小屏幕 */
+@media (max-width: 480px) {
+    .card-container {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 0 15px;
+    }
+    
+    .app-header h1 {
+        font-size: 1.8rem;
+        margin-bottom: 30px;
+    }
+    
+    .feature-card {
+        height: 180px;
+        padding: 25px 15px;
+        will-change: transform;
+    }
+    
+    .card-icon {
+        font-size: 3.5rem;
+        margin-bottom: 15px;
+    }
+    
+    .feature-card h3 {
+        font-size: 1.2rem;
+    }
+    
+    .feature-card p {
+        font-size: 0.9rem;
+    }
+    
+    .logout-btn {
+        position: fixed;
+        bottom: 15px;
+        left: 15px;
+        padding: 8px 12px;
+        font-size: 12px;
+        border-radius: 20px;
+    }
+}
+
+/* 平板设备 - 中等屏幕 */
+@media (min-width: 481px) and (max-width: 768px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+        padding: 0 20px;
+    }
+    
+    .app-header h1 {
+        font-size: 2rem;
+    }
+    
+    .feature-card {
+        height: 190px;
+        padding: 25px 20px;
+    }
+    
+    .logout-btn {
+        position: fixed;
+        bottom: 20px;
+        padding: 10px 15px;
+        font-size: 13px;
+    }
+}
+
+/* 平板/笔记本电脑 - 大屏幕 */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .card-container {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+    
+    .feature-card {
+        height: 200px;
+        padding: 30px 20px;
+    }
+}
+
+/* 桌面设备 - 超大屏幕 */
+@media (min-width: 1200px) {
+    .card-container {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 35px;
+    }
+    
+    .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    /* 从1.txt中提取的大屏幕卡片效果增强 */
+    .feature-card {
+        height: 220px;
+        padding: 35px;
+    }
+    
+    .feature-card:hover {
+        transform: translateY(-12px) translateZ(8px) scale(1.04);
+    }
 }
