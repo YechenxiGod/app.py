@@ -40,12 +40,17 @@ def init_database():
                 db.session.commit()
                 print(">>> 示例动漫特摄资源数据插入成功")
 
-            # 插入默认管理员账号（如果不存在）
-            if AdminUser.query.filter_by(Username='admin').first() is None:
+            # 插入或更新默认管理员账号
+            admin_user = AdminUser.query.filter_by(Username='admin').first()
+            if not admin_user:
                 admin_user = AdminUser(Username='admin', Password='123456')
                 db.session.add(admin_user)
-                db.session.commit()
                 print(">>> 默认管理员账号创建成功")
+            else:
+                # 强制更新密码
+                admin_user.Password = '123456'
+                print(">>> 默认管理员账号密码已重置为123456")
+            db.session.commit()
 
             # 插入默认普通用户账号（如果不存在）
             if User.query.filter_by(Username='admin').first() is None:
@@ -60,7 +65,7 @@ def init_database():
 
 
 # 初始化数据库
-# init_database()  # 暂时注释掉，让数据库表通过SQL文件创建
+init_database()  # 取消注释，初始化数据库并创建默认账号
 
 
 # 路由定义
@@ -74,7 +79,11 @@ def hello():
 def admin_login():
     """管理员登录验证"""
     try:
+        # 添加调试日志
+        print("收到管理员登录请求")
         data = request.get_json()
+        print(f"登录数据: {data}")
+
         username = data.get('username')
         password = data.get('password')
 
@@ -83,6 +92,11 @@ def admin_login():
 
         # 查询管理员用户
         admin = AdminUser.query.filter_by(Username=username).first()
+        print(f"查询到的管理员: {admin}")
+
+        # 打印所有管理员用户
+        all_admins = AdminUser.query.all()
+        print(f"所有管理员用户: {[a.Username for a in all_admins]}")
 
         if admin and admin.Password == password:
             return jsonify({
@@ -91,12 +105,15 @@ def admin_login():
                 "user": admin.to_dict()
             })
         else:
+            if admin:
+                print(f"密码不匹配: 输入密码='{password}', 数据库密码='{admin.Password}'")
             return jsonify({
                 "success": False,
                 "message": "账号/密码错误或不存在"
             }), 401
 
     except Exception as e:
+        print(f"登录异常: {str(e)}")
         return jsonify({"success": False, "error": str(e)}), 500
 
 

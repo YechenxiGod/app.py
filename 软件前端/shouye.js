@@ -339,13 +339,15 @@ class ContentManager {
             // 尝试从API获取数据
             const response = await fetch('/api/popular');
             if (response.ok) {
-                return await response.json();
+                const data = await response.json();
+                // 随机排序并固定返回12个内容
+                return [...data].sort(() => 0.5 - Math.random()).slice(0, 12);
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
             console.log('API调用失败，使用模拟数据:', error);
-            // 返回模拟数据
-            return this.mockResources;
+            // 随机排序并固定返回12个内容
+            return [...this.mockResources].sort(() => 0.5 - Math.random()).slice(0, 12);
         }
     }
     
@@ -398,14 +400,14 @@ class ContentManager {
             const response = await fetch('/api/carousel');
             if (response.ok) {
                 const data = await response.json();
-                return data.slice(0, 5); // 最多显示5个轮播项
+                // 随机排序并固定返回7个轮播项
+                return [...data].sort(() => 0.5 - Math.random()).slice(0, 7);
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
             console.log('轮播图API调用失败，使用模拟数据:', error);
-            // 随机选择3-5个资源作为轮播图
-            const shuffled = [...this.mockResources].sort(() => 0.5 - Math.random());
-            return shuffled.slice(0, Math.floor(Math.random() * 3) + 3);
+            // 随机排序并固定返回7个资源作为轮播图
+            return [...this.mockResources].sort(() => 0.5 - Math.random()).slice(0, 7);
         }
     }
     
