@@ -46,6 +46,8 @@ class Resource(db.Model):
     Director = db.Column(db.String(100), nullable=False)
     Studio = db.Column(db.String(100))
     Category = db.Column(db.String(50))
+    Country = db.Column(db.String(50))
+    Description = db.Column(db.Text)
     Status = db.Column(db.Enum('可观看', '已借出'), default='可观看')
     CreateDate = db.Column(db.DateTime, default=datetime.utcnow)
 
@@ -60,6 +62,8 @@ class Resource(db.Model):
             'director': self.Director,
             'producer': self.Studio,
             'category': self.Category,
+            'country': self.Country,
+            'description': self.Description,
             'status': self.Status,
             'createDate': self.CreateDate.isoformat() if self.CreateDate else None
         }

@@ -347,25 +347,22 @@ def get_popular_resources():
     """获取热门推荐的动漫和特摄剧"""
     try:
         # 获取热门推荐的资源（这里简单返回所有资源，实际应用中可以根据评分、借阅次数等排序）
-        popular_resources = Resource.query.limit(8).all()
+        popular_resources = Resource.query.limit(12).all()
 
-        # 转换为字典列表，使用to_dict方法保持字段名一致性
+        # 转换为字典列表，确保包含所有必要的字段
         result = []
         for resource in popular_resources:
-            # 获取基础字典
-            resource_dict = resource.to_dict()
-            # 调整字段名以匹配前端需求
             result.append({
-                'ResourceID': resource.ResourceID,
                 'id': resource.ResourceID,
-                'Code': resource.Code,
-                'Name': resource.Name,
-                'Director': resource.Director,
-                'Studio': resource.Studio,
-                'Category': resource.Category,
-                'Status': resource.Status,
-                'title': resource.Name,  # 同时提供title字段以兼容可能的其他前端需求
-                'status': resource.Status  # 同时提供小写status字段
+                'title': resource.Name,
+                'description': resource.Description or '暂无简介',
+                'director': resource.Director,
+                'studio': resource.Studio,
+                'category': resource.Category,
+                'country': resource.Country or '未知国家',
+                'status': resource.Status,
+                # 为图片路径提供一个默认值，实际应用中应该从数据库获取
+                'imageUrl': f'/images/{resource.Code.lower()}.jpg'
             })
 
         return jsonify({"success": True, "data": result, "message": "获取热门资源成功"})
@@ -373,6 +370,40 @@ def get_popular_resources():
         print(f"获取热门推荐失败: {e}")
         print(traceback.format_exc())
         return jsonify({"success": False, "error": str(e), "message": f"获取热门资源失败: {str(e)}"}), 500
+
+
+@app.route('/api/resources/carousel', methods=['GET'])
+def get_carousel_resources():
+    """获取轮播图数据"""
+    try:
+        # 随机获取5个资源用于轮播图
+        from sqlalchemy.sql.expression import func
+        carousel_resources = Resource.query.order_by(func.random()).limit(5).all()
+
+        # 转换为字典列表
+        result = []
+        for resource in carousel_resources:
+            result.append({
+                'id': resource.ResourceID,
+                'title': resource.Name,
+                'description': resource.Description or '暂无简介',
+                'director': resource.Director,
+                'studio': resource.Studio,
+                'country': resource.Country or '未知国家',
+                # 为图片路径提供一个默认值
+                'imageUrl': f'/images/{resource.Code.lower()}_banner.jpg',
+                # 添加元数据
+                'meta': {
+                    'category': resource.Category,
+                    'year': '2023'  # 实际应用中应该从数据库获取
+                }
+            })
+
+        return jsonify({"success": True, "data": result, "message": "获取轮播图数据成功"})
+    except Exception as e:
+        print(f"获取轮播图数据失败: {e}")
+        print(traceback.format_exc())
+        return jsonify({"success": False, "error": str(e), "message": f"获取轮播图数据失败: {str(e)}"}), 500
 
 
 if __name__ == '__main__':
