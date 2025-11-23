@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>动漫与特摄剧管理系统 - 首页</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="shouye.css">
+</head>
+<body>
+    <!-- 侧边导航 -->
+    <nav class="nav-sidebar">
+        <h3>内容分类</h3>
+        <ul>
+            <li><a href="#">首页</a></li>
+            <li><a href="#">日漫</a></li>
+            <li><a href="#">台配/国配</a></li>
+            <li><a href="#">国漫</a></li>
+            <li><a href="#">美漫</a></li>
+            <li><a href="#">电影</a></li>
+            <li><a href="#">剧集</a></li>
+        </ul>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <!-- 统计预览 -->
+        <div class="stats-preview">
+            <h2>资源统计</h2>
+            <div class="stats-preview-grid">
+                <div class="stats-preview-item">
+                    <div class="stats-preview-number" id="totalResourcesHome">0</div>
+                    <div class="stats-preview-label">总资源数</div>
+                </div>
+                <div class="stats-preview-item">
+                    <div class="stats-preview-number" id="availableResourcesHome">0</div>
+                    <div class="stats-preview-label">可观看</div>
+                </div>
+                <div class="stats-preview-item">
+                    <div class="stats-preview-number" id="borrowedResourcesHome">0</div>
+                    <div class="stats-preview-label">已借出</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主要推荐 -->
+        <div class="banner-section">
+            <div class="banner-content">
+                <div class="banner-info">
+                    <h2>我独自升级 - 第二季</h2>
+                    <div class="subtitle">起於闇影</div>
+                    <p>程力为管理局王后，理智终于获得了操纵无穷大军的能力。为了治愈生病的母亲，寻找到作为生命奇术水的材料，程力独自踏上领地恶魔城。</p>
+                    <button onclick="window.location.href='index.html'">查看详情</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 热门推荐 -->
+        <div class="featured-section">
+            <div class="section-title">
+                <h2>热门推荐</h2>
+                <a href="#" onclick="return false;">查看更多 →</a>
+            </div>
+            <div class="anime-grid" id="popularAnimes">
+                <!-- 这里将通过JavaScript动态填充 -->
+                <div class="loading">加载中...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="shouye.js"></script>
+</body>
+</html>

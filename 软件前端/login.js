@@ -3,15 +3,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const userTypeBtns = document.querySelectorAll('.user-type-btn');
     const adminFeatures = document.getElementById('adminFeatures');
     const loginForm = document.getElementById('loginForm');
-    const soundControl = document.getElementById('soundControl');
-    const soundIcon = soundControl.querySelector('.sound-icon');
     const mutedVideo = document.getElementById('mutedVideo');
     const soundVideo = document.getElementById('soundVideo');
     const videoFallback = document.querySelector('.video-fallback');
     const videoLoading = document.getElementById('videoLoading');
     const interactionHint = document.getElementById('interactionHint');
     
-    let isMuted = true; // 初始为静音状态
     let videoSwitched = false; // 标记是否已切换到有声音视频
     
     // 用户类型切换
@@ -28,22 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // 声音控制
-    soundControl.addEventListener('click', function() {
-        if (!videoSwitched) {
-            // 如果还没切换到有声音视频，先切换
-            switchToSoundVideo();
-        }
-        
-        isMuted = !isMuted;
-        soundVideo.muted = isMuted;
-        
-        if (isMuted) {
-            soundIcon.textContent = '🔇';
-        } else {
-            soundIcon.textContent = '🔊';
-        }
-    });
+    // 移除了静音控制功能，现在自动根据用户交互切换视频
     
     // 表单提交
     loginForm.addEventListener('submit', function(e) {
@@ -150,9 +132,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 videoLoading.style.display = 'none';
                 interactionHint.classList.add('hidden');
                 
-                // 设置初始音量
+                // 设置初始音量并确保有声音
                 soundVideo.volume = 0.5;
-                soundVideo.muted = isMuted;
+                soundVideo.muted = false;
             }).catch(function(error) {
                 // 动漫背景视频播放被阻止
                 console.log('动漫背景视频播放被阻止:', error);
@@ -173,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // 设置有声音视频属性
         soundVideo.volume = 0.5;
-        soundVideo.muted = true; // 初始为静音
+        soundVideo.muted = true; // 初始为静音，交互后自动取消静音
         soundVideo.preload = "auto";
         
         // 静音视频加载成功事件

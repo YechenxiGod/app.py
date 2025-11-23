@@ -101,32 +101,7 @@ body {
     100% { background-position: 0% 50%; }
 }
 
-/* 声音控制按钮 */
-.sound-control {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 40px;
-    height: 40px;
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    z-index: 100;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-}
-
-.sound-control:hover {
-    background: rgba(255, 255, 255, 1);
-    transform: scale(1.1);
-}
-
-.sound-icon {
-    font-size: 1.2rem;
-}
+/* 移除了静音控制按钮样式 */
 
 .login-container {
     background: white;
