@@ -19,6 +19,9 @@ document.querySelectorAll('.feature-card').forEach(card => {
             switch(cardId) {
                 case 'home':
                     console.log('动漫与特摄剧首页功能');
+                    setTimeout(() => {
+                        window.location.href = 'shouye.html';
+                    }, 500);
                     break;
                 case 'categories':
                     console.log('动漫与特摄剧分类浏览功能');
@@ -302,28 +305,30 @@ function addInteractiveFeatures() {
     });
 }
 
-// 动漫与特摄剧管理系统 - 显示通知功能
+// 动漫与特摄剧管理系统 - 显示通知功能（优化版）
 function showNotification(message) {
     // 创建通知元素
     const notification = document.createElement('div');
     notification.textContent = message;
     
-    // 使用现代通知样式
+    // 使用更明显美观的通知样式
     notification.style.cssText = `
         position: fixed;
-        top: 20px;
-        right: 20px;
-        background: linear-gradient(135deg, var(--el-color-primary-light-5), var(--el-color-primary));
+        top: 40px;
+        right: 40px;
+        background: linear-gradient(135deg, #409eff, #66b1ff);
         color: white;
-        padding: 15px 20px;
-        border-radius: var(--el-border-radius-round);
-        box-shadow: var(--el-box-shadow-dark);
-        z-index: var(--el-index-popper);
-        transform: translateX(100%);
-        transition: all var(--el-transition-duration) var(--el-transition-function-ease-in-out-bezier);
-        max-width: 300px;
-        font-size: var(--el-font-size-base);
-        font-weight: var(--el-font-weight-primary);
+        padding: 20px 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(64, 158, 255, 0.4);
+        z-index: 99999;
+        transform: translateX(100%) translateY(-20px);
+        opacity: 0;
+        transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        max-width: 350px;
+        font-size: 18px;
+        font-weight: 600;
+        border: 2px solid rgba(255, 255, 255, 0.3);
     `;
     
     document.body.appendChild(notification);
@@ -332,40 +337,78 @@ function showNotification(message) {
     setTimeout(() => {
         notification.style.transform = 'translateX(0) translateY(0)';
         notification.style.opacity = '1';
+        // 添加轻微的脉动动画
+        notification.style.animation = 'pulse 2s ease-in-out 1';
+        notification.style.animationFillMode = 'both';
     }, 100);
     
-    // 添加关闭按钮
+    // 添加动画样式
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes pulse {
+            0% { transform: translateX(0) translateY(0); box-shadow: 0 10px 25px rgba(64, 158, 255, 0.4); }
+            50% { transform: translateX(-5px) translateY(-5px); box-shadow: 0 15px 35px rgba(64, 158, 255, 0.6); }
+            100% { transform: translateX(0) translateY(0); box-shadow: 0 10px 25px rgba(64, 158, 255, 0.4); }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // 添加关闭按钮（更大更明显）
     const closeBtn = document.createElement('span');
     closeBtn.textContent = '×';
     closeBtn.style.cssText = `
         position: absolute;
-        top: 8px;
-        right: 12px;
-        font-size: 20px;
+        top: 10px;
+        right: 15px;
+        font-size: 24px;
         cursor: pointer;
-        opacity: 0.7;
-        transition: opacity 0.2s;
+        opacity: 0.9;
+        transition: all 0.2s;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.2);
     `;
-    closeBtn.addEventListener('mouseenter', () => closeBtn.style.opacity = '1');
-    closeBtn.addEventListener('mouseleave', () => closeBtn.style.opacity = '0.7');
-    closeBtn.addEventListener('click', () => {
-        notification.style.transform = 'translateX(100%)';
-        setTimeout(() => {
-            document.body.removeChild(notification);
-        }, 300);
+    closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.opacity = '1';
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.3)';
+        closeBtn.style.transform = 'scale(1.1)';
     });
-    notification.appendChild(closeBtn);
-    
-    // 自动关闭
-    setTimeout(() => {
-        notification.style.transform = 'translateX(100%) translateY(-10px)';
+    closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.opacity = '0.9';
+        closeBtn.style.background = 'rgba(255, 255, 255, 0.2)';
+        closeBtn.style.transform = 'scale(1)';
+    });
+    closeBtn.addEventListener('click', () => {
+        notification.style.transform = 'translateX(100%) translateY(-20px)';
         notification.style.opacity = '0';
         setTimeout(() => {
             if (document.body.contains(notification)) {
                 document.body.removeChild(notification);
             }
+            if (document.head.contains(style)) {
+                document.head.removeChild(style);
+            }
         }, 300);
-    }, 3000);
+    });
+    notification.appendChild(closeBtn);
+    
+    // 自动关闭（延长显示时间）
+    setTimeout(() => {
+        notification.style.transform = 'translateX(100%) translateY(-20px)';
+        notification.style.opacity = '0';
+        setTimeout(() => {
+            if (document.body.contains(notification)) {
+                document.body.removeChild(notification);
+            }
+            if (document.head.contains(style)) {
+                document.head.removeChild(style);
+            }
+        }, 500);
+    }, 5000);
 }
 
 // 动漫与特摄剧管理系统 - 添加键盘快捷键支持
