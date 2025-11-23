@@ -1,466 +1,147 @@
-/* 首页特定样式 */
-body {
-    background-color: #0a0a1a;
-    background-image: 
-        radial-gradient(circle at 25% 15%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-        radial-gradient(circle at 75% 85%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
-    color: #f0f0f0;
+/* 重置默认样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.anime-header {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    padding: 1rem 0;
-    position: relative;
+body, html {
+    height: 100%;
+    width: 100%;
+    font-family: Arial, sans-serif;
+    overflow-x: hidden;
+}
+
+/* 动漫与特摄剧管理系统 - 首页样式表 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+}
+
+:root {
+    --main-bg-color: transparent;
+    --card-bg-color: rgba(255, 255, 255, 0.7);
+    --text-color: #444;
+    --accent-color: #5a78e8;
+    --secondary-color: #7b57c7;
+    --border-color: rgba(0, 0, 0, 0.08);
+    --hover-bg-color: rgba(0, 0, 0, 0.05);
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    font-family: 'Microsoft YaHei', Arial, sans-serif;
+    overflow-x: hidden;
+    background: var(--main-bg-color);
+    color: var(--text-color);
+    cursor: default; /* 使用默认鼠标指针 */
+}
+
+/* 背景容器样式 */
+.background-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
     overflow: hidden;
 }
 
-.header-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 2rem;
-    display: flex;
-    align-items: center;
-    position: relative;
-    z-index: 2;
+/* 背景视频样式 - 参考user.css实现 */
+.background-video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    transform: translate(-50%, -50%);
+    object-fit: cover;
+    filter: brightness(1) saturate(1.1);
+    transition: filter 0.5s ease, transform 0.5s ease;
+    will-change: transform, filter;
+    pointer-events: none;
 }
 
-.nav-sidebar {
+/* 鼠标悬停时增强背景视频效果 */
+.background-container:hover .background-video {
+    transform: translate(-50%, -50%) scale(1.02);
+    filter: brightness(1.1) saturate(1.2);
+}
+
+/* 背景叠加层 - 移除深色覆盖以保持视频亮度 */
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0); /* 完全透明，保持视频原有亮度 */
+    z-index: 1;
+    transition: background 0.3s ease;
+}
+
+/* 左侧导航栏 - 纯文字显示 */
+.sidebar {
     position: fixed;
     left: 0;
     top: 0;
     height: 100vh;
-    width: 200px;
-    background: linear-gradient(180deg, #16213e 0%, #0f3460 100%);
-    padding: 2rem 0;
-    z-index: 10;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.3);
-}
-
-.nav-sidebar h3 {
-    color: #e94560;
-    text-align: center;
-    margin-bottom: 2rem;
-    font-size: 1.2rem;
-}
-
-.nav-sidebar ul {
-    list-style: none;
-    padding: 0;
-}
-
-.nav-sidebar li {
-    padding: 0.8rem 1.5rem;
-    transition: all 0.3s ease;
-}
-
-.nav-sidebar li:hover {
-    background-color: rgba(233, 69, 96, 0.1);
-    padding-left: 2rem;
-}
-
-.nav-sidebar a {
-    color: #f0f0f0;
-    text-decoration: none;
-    display: block;
-    font-size: 1rem;
-}
-
-.main-content {
-    margin-left: 200px;
-    padding: 2rem;
-    min-height: 100vh;
-}
-
-.banner-section {
-    position: relative;
-    margin-bottom: 3rem;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.banner-content {
-    display: flex;
-    flex-wrap: wrap;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-}
-
-.banner-info {
-    flex: 1;
-    min-width: 300px;
-    padding: 2rem;
+    width: 120px;
+    z-index: 100;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    align-items: center;
+    padding-top: 50px;
 }
 
-.banner-info h2 {
-    font-size: 2.5rem;
-    color: #e94560;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-.banner-info .subtitle {
-    font-size: 1.2rem;
-    color: #f0f0f0;
-    margin-bottom: 1.5rem;
-}
-
-.banner-info p {
-    margin-bottom: 1.5rem;
-    line-height: 1.8;
-}
-
-.banner-info button {
-    background-color: #e94560;
-    color: white;
-    border: none;
-    padding: 0.8rem 2rem;
-    border-radius: 30px;
-    font-size: 1rem;
+/* 导航项样式 */
+.nav-item {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 18px;
+    text-decoration: none;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: center;
+    transition: all 0.3s ease;
     cursor: pointer;
-    transition: all 0.3s ease;
-    align-self: flex-start;
+    position: relative;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5); /* 添加文字阴影以增强可读性 */
 }
 
-.banner-info button:hover {
-    background-color: #d43a54;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
-}
-
-.featured-section {
-    margin-bottom: 3rem;
-}
-
-.section-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1.5rem;
-}
-
-.section-title h2 {
-    color: #e94560;
-    font-size: 1.8rem;
-}
-
-.section-title a {
-    color: #f0f0f0;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.3s ease;
-}
-
-.section-title a:hover {
-    color: #e94560;
-}
-
-.anime-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-}
-
-.anime-card {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    height: 350px;
-    display: flex;
-    flex-direction: column;
-}
-
-.anime-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 30px rgba(0,0,0,0.3);
-}
-
-.anime-image {
-    height: 250px;
-    background-color: #2c3e50;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-
-.anime-info {
-    padding: 1rem;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-.anime-title {
-    font-size: 1rem;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-    color: #f0f0f0;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.anime-director {
-    font-size: 0.8rem;
-    color: #6c757d;
-    margin-bottom: 0.5rem;
-}
-
-.anime-status {
-    font-size: 0.8rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-    align-self: flex-start;
-    margin-top: auto;
-}
-
-.anime-status.available {
-    background-color: rgba(40, 167, 69, 0.2);
-    color: #28a745;
-}
-
-.anime-status.borrowed {
-    background-color: rgba(220, 53, 69, 0.2);
-    color: #dc3545;
-}
-
-.stats-preview {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin-bottom: 3rem;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.stats-preview h2 {
-    color: #e94560;
-    margin-bottom: 1rem;
-    font-size: 1.5rem;
-}
-
-.stats-preview-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-}
-
-.stats-preview-item {
-    text-align: center;
-    padding: 1rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 8px;
-}
-
-.stats-preview-number {
-    font-size: 1.8rem;
+/* 首页导航项特殊样式 */
+.nav-item:first-child {
+    color: #ff6b6b; /* 红色高亮 */
     font-weight: bold;
-    color: #f0f0f0;
-    margin-bottom: 0.5rem;
+    font-size: 20px;
 }
 
-.stats-preview-label {
-    font-size: 0.9rem;
-    color: #6c757d;
+/* 导航项悬停效果 */
+.nav-item:hover {
+    color: #ffffff;
+    transform: translateX(5px);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.8); /* 悬停时添加文字发光效果 */
 }
 
-/* 轮播图样式 */
-.carousel {
-    position: relative;
-    margin-bottom: 3rem;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-}
-
-.carousel-container {
-    position: relative;
-    height: 500px;
-    overflow: hidden;
-}
-
-.carousel-slides {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.carousel-slide {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    opacity: 0;
-    transition: opacity 0.5s ease-in-out;
-}
-
-.carousel-slide.active {
-    opacity: 1;
-}
-
-.carousel-content {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    padding: 4rem 2rem;
-    background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.3), transparent);
-    color: #f0f0f0;
-}
-
-.carousel-content h2 {
-    font-size: 2.5rem;
-    color: #e94560;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-}
-
-.carousel-content p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    max-width: 800px;
-    margin-bottom: 1.5rem;
-    text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-}
-
-.carousel-content button {
-    background-color: #e94560;
-    color: white;
-    border: none;
-    padding: 0.8rem 2rem;
-    border-radius: 30px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.carousel-content button:hover {
-    background-color: #d43a54;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
-}
-
-.carousel-prev,
-.carousel-next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background-color: rgba(0,0,0,0.5);
-    color: white;
-    border: none;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    z-index: 10;
-}
-
-.carousel-prev:hover,
-.carousel-next:hover {
-    background-color: rgba(233, 69, 96, 0.8);
-    transform: translateY(-50%) scale(1.1);
-}
-
-.carousel-prev {
-    left: 20px;
-}
-
-.carousel-next {
-    right: 20px;
-}
-
-.carousel-indicators {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 10px;
-    z-index: 10;
-}
-
-.carousel-indicator {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    border: none;
-    background-color: rgba(255,255,255,0.5);
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.carousel-indicator:hover,
-.carousel-indicator.active {
-    background-color: #e94560;
-    transform: scale(1.2);
-}
-
-/* 响应式设计 */
+/* 响应式设计 - 小屏幕时调整导航栏宽度 */
 @media (max-width: 768px) {
-    .nav-sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
+    .sidebar {
+        width: 80px;
     }
-
-    .main-content {
-        margin-left: 0;
-        padding: 1rem;
+    
+    .nav-item {
+        font-size: 14px;
+        padding: 12px 10px;
     }
-
-    .header-content {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .banner-content {
-        flex-direction: column;
-    }
-
-    .anime-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    }
-
-    /* 轮播图响应式调整 */
-    .carousel-container {
-        height: 300px;
-    }
-
-    .carousel-content {
-        padding: 2rem 1rem;
-    }
-
-    .carousel-content h2 {
-        font-size: 1.8rem;
-    }
-
-    .carousel-content p {
-        font-size: 0.9rem;
-    }
-
-    .carousel-prev,
-    .carousel-next {
-        width: 40px;
-        height: 40px;
-        font-size: 1.2rem;
-    }
-
-    .carousel-prev {
-        left: 10px;
-    }
-
-    .carousel-next {
-        right: 10px;
+    
+    .nav-item:first-child {
+        font-size: 16px;
     }
 }
+

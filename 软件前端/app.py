@@ -341,6 +341,38 @@ def get_category_stats():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route('/api/resources/popular', methods=['GET'])
+def get_popular_resources():
+    """获取热门推荐的动漫和特摄剧"""
+    try:
+        # 获取热门推荐的资源（这里简单返回所有资源，实际应用中可以根据评分、借阅次数等排序）
+        popular_resources = Resource.query.limit(8).all()
+        
+        # 转换为字典列表，使用to_dict方法保持字段名一致性
+        result = []
+        for resource in popular_resources:
+            # 获取基础字典
+            resource_dict = resource.to_dict()
+            # 调整字段名以匹配前端需求
+            result.append({
+                'ResourceID': resource.ResourceID,
+                'id': resource.ResourceID,
+                'Code': resource.Code,
+                'Name': resource.Name,
+                'Director': resource.Director,
+                'Studio': resource.Studio,
+                'Category': resource.Category,
+                'Status': resource.Status,
+                'title': resource.Name,  # 同时提供title字段以兼容可能的其他前端需求
+                'status': resource.Status  # 同时提供小写status字段
+            })
+        
+        return jsonify({"success": True, "data": result, "message": "获取热门资源成功"})
+    except Exception as e:
+        print(f"获取热门推荐失败: {e}")
+        print(traceback.format_exc())
+        return jsonify({"success": False, "error": str(e), "message": f"获取热门资源失败: {str(e)}"}), 500
+
 
 if __name__ == '__main__':
     print("启动动漫与特摄剧管理系统后端...")

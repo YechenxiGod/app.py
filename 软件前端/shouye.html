@@ -4,53 +4,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>动漫与特摄剧管理系统 - 首页</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="shouye.css">
 </head>
 <body>
-    <!-- 侧边导航 -->
-    <nav class="nav-sidebar">
-        <h3>内容分类</h3>
-        <ul>
-            <li><a href="#">首页</a></li>
-            <li><a href="#">日漫</a></li>
-            <li><a href="#">台配/国配</a></li>
-            <li><a href="#">国漫</a></li>
-            <li><a href="#">美漫</a></li>
-            <li><a href="#">电影</a></li>
-            <li><a href="#">剧集</a></li>
-        </ul>
-    </nav>
-
-    <!-- 主内容区 -->
-    <div class="main-content">
-        <!-- 轮播图 -->
-        <div class="carousel">
-            <div class="carousel-container">
-                <div class="carousel-slides">
-                    <!-- 轮播图片将通过JS动态添加 -->
-                </div>
-                <button class="carousel-prev">&lt;</button>
-                <button class="carousel-next">&gt;</button>
-                <div class="carousel-indicators">
-                    <!-- 指示器将通过JS动态添加 -->
-                </div>
-            </div>
-        </div>
-        </div>
-
-        <!-- 热门推荐 -->
-        <div class="featured-section">
-            <div class="section-title">
-                <h2>热门推荐</h2>
-                <a href="#" onclick="return false;">查看更多 →</a>
-            </div>
-            <div class="anime-grid" id="popularAnimes">
-                <!-- 这里将通过JavaScript动态填充 -->
-                <div class="loading">加载中...</div>
-            </div>
-        </div>
+    <!-- 左侧透明导航栏 -->
+    <div class="sidebar">
+        <div class="nav-item">首页</div>
+        <div class="nav-item">日漫</div>
+        <div class="nav-item">台配/国配</div>
+        <div class="nav-item">国漫</div>
+        <div class="nav-item">美漫</div>
+        <div class="nav-item">电影</div>
+        <div class="nav-item">剧集</div>
     </div>
+    
+    <!-- 背景容器 - 默认显示静音视频，交互后切换到有声音视频 -->
+    <div class="background-container">
+        <!-- 静音预览视频 - 默认显示 -->
+        <video class="background-video" id="previewVideo" autoplay muted loop playsinline>
+            <source src="【哲风壁纸】动态壁纸-动漫-简约.mp4" type="video/mp4">
+            您的浏览器不支持视频播放
+        </video>
+        <!-- 有声音视频 - 默认隐藏 -->
+        <video class="background-video" id="mainVideo" loop playsinline style="display: none;">
+            <source src="chaoran.mp4" type="video/mp4">
+            您的浏览器不支持视频播放
+        </video>
+        <div class="background-overlay"></div>
+    </div>
+
+
 
     <script src="shouye.js"></script>
 </body>
