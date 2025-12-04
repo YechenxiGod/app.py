@@ -151,19 +151,74 @@ function resetSearch() {
     loadResources();
 }
 
+// 处理图片文件选择
+function handleImageFileChange() {
+    const fileInput = document.getElementById('imageFileInput');
+    const imagePreview = document.getElementById('imagePreview');
+    const imageUrlInput = document.getElementById('imageUrlInput');
+    
+    if (fileInput.files && fileInput.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            // 显示图片预览
+            imagePreview.src = e.target.result;
+            imagePreview.style.display = 'block';
+            
+            // 将本地图片转换为DataURL并设置到图片URL输入框
+            imageUrlInput.value = e.target.result;
+        }
+        
+        reader.readAsDataURL(fileInput.files[0]);
+    }
+}
+
 // 显示添加表单
 function showAddForm() {
     currentEditingResourceId = null;
-    document.getElementById('modalTitle').textContent = '添加资源';
-    document.getElementById('codeInput').value = '';
-    document.getElementById('titleInput').value = '';
-    document.getElementById('directorInput').value = '';
-    document.getElementById('producerInput').value = '';
-    document.getElementById('categoryInput').value = '';
-    document.getElementById('countryInput').value = '';
-    document.getElementById('descriptionInput').value = '';
-    document.getElementById('statusSelect').value = '可观看';
-    document.getElementById('resourceModal').style.display = 'flex';
+    
+    // 添加完整的null检查
+    const modalTitle = document.getElementById('modalTitle');
+    if (modalTitle) modalTitle.textContent = '添加资源';
+    
+    const codeInput = document.getElementById('codeInput');
+    if (codeInput) codeInput.value = '';
+    
+    const titleInput = document.getElementById('titleInput');
+    if (titleInput) titleInput.value = '';
+    
+    const directorInput = document.getElementById('directorInput');
+    if (directorInput) directorInput.value = '';
+    
+    const producerInput = document.getElementById('producerInput');
+    if (producerInput) producerInput.value = '';
+    
+    const categoryInput = document.getElementById('categoryInput');
+    if (categoryInput) categoryInput.value = '';
+    
+    const countryInput = document.getElementById('countryInput');
+    if (countryInput) countryInput.value = '';
+    
+    const descriptionInput = document.getElementById('descriptionInput');
+    if (descriptionInput) descriptionInput.value = '';
+    
+    const imageUrlInput = document.getElementById('imageUrlInput');
+    if (imageUrlInput) imageUrlInput.value = '';
+    
+    const statusSelect = document.getElementById('statusSelect');
+    if (statusSelect) statusSelect.value = '可观看';
+    
+    const imageFileInput = document.getElementById('imageFileInput');
+    if (imageFileInput) imageFileInput.value = '';
+    
+    const imagePreview = document.getElementById('imagePreview');
+    if (imagePreview) {
+        imagePreview.src = '';
+        imagePreview.style.display = 'none';
+    }
+    
+    const resourceModal = document.getElementById('resourceModal');
+    if (resourceModal) resourceModal.style.display = 'flex';
 }
 
 // 编辑资源
@@ -173,16 +228,55 @@ async function editResource(resourceId) {
         const resource = await response.json();
         
         currentEditingResourceId = resourceId;
-        document.getElementById('modalTitle').textContent = '编辑资源';
-        document.getElementById('codeInput').value = resource.code;
-        document.getElementById('titleInput').value = resource.title;
-        document.getElementById('directorInput').value = resource.director;
-        document.getElementById('producerInput').value = resource.producer || '';
-        document.getElementById('categoryInput').value = resource.category || '';
-        document.getElementById('countryInput').value = resource.country || '';
-        document.getElementById('descriptionInput').value = resource.description || '';
-        document.getElementById('statusSelect').value = resource.status;
-        document.getElementById('resourceModal').style.display = 'flex';
+        
+        // 添加完整的null检查
+        const modalTitle = document.getElementById('modalTitle');
+        if (modalTitle) modalTitle.textContent = '编辑资源';
+        
+        const codeInput = document.getElementById('codeInput');
+        if (codeInput) codeInput.value = resource.code;
+        
+        const titleInput = document.getElementById('titleInput');
+        if (titleInput) titleInput.value = resource.title;
+        
+        const directorInput = document.getElementById('directorInput');
+        if (directorInput) directorInput.value = resource.director;
+        
+        const producerInput = document.getElementById('producerInput');
+        if (producerInput) producerInput.value = resource.producer || '';
+        
+        const categoryInput = document.getElementById('categoryInput');
+        if (categoryInput) categoryInput.value = resource.category || '';
+        
+        const countryInput = document.getElementById('countryInput');
+        if (countryInput) countryInput.value = resource.country || '';
+        
+        const descriptionInput = document.getElementById('descriptionInput');
+        if (descriptionInput) descriptionInput.value = resource.description || '';
+        
+        const imageUrlInput = document.getElementById('imageUrlInput');
+        if (imageUrlInput) imageUrlInput.value = resource.imageUrl || '';
+        
+        const statusSelect = document.getElementById('statusSelect');
+        if (statusSelect) statusSelect.value = resource.status;
+        
+        const imageFileInput = document.getElementById('imageFileInput');
+        if (imageFileInput) imageFileInput.value = '';
+        
+        // 显示图片预览
+        const imagePreview = document.getElementById('imagePreview');
+        if (imagePreview) {
+            if (resource.imageUrl) {
+                imagePreview.src = resource.imageUrl;
+                imagePreview.style.display = 'block';
+            } else {
+                imagePreview.src = '';
+                imagePreview.style.display = 'none';
+            }
+        }
+        
+        const resourceModal = document.getElementById('resourceModal');
+        if (resourceModal) resourceModal.style.display = 'flex';
       } catch (error) {
           console.error('加载资源信息失败:', error);
           alert('加载资源信息失败');
@@ -201,6 +295,7 @@ async function saveResource(event) {
         category: document.getElementById('categoryInput').value,
         country: document.getElementById('countryInput').value,
         description: document.getElementById('descriptionInput').value,
+        imageUrl: document.getElementById('imageUrlInput').value,
         status: document.getElementById('statusSelect').value
     };
     
@@ -225,6 +320,11 @@ async function saveResource(event) {
         });
         
         if (response.ok) {
+            // 如果是更新"一人之下"资源，同步更新shouye.js文件
+            if (resourceData.title === '一人之下' || (currentEditingResourceId && currentEditingResourceId === 2)) {
+                updateShouyeImage(resourceData.imageUrl);
+            }
+            
             hideResourceModal();
             loadResources();
             loadStats();
@@ -235,6 +335,24 @@ async function saveResource(event) {
     } catch (error) {
         console.error('保存资源失败:', error);
         alert('操作失败');
+    }
+}
+
+// 更新shouye.js文件中的"一人之下"资源图片
+async function updateShouyeImage(imageUrl) {
+    try {
+        // 这里可以实现更新shouye.js文件的逻辑
+        // 由于前端JavaScript无法直接修改服务器上的文件
+        // 可以考虑通过API将图片URL发送到后端，由后端更新shouye.js文件
+        console.log('更新shouye.js中的"一人之下"资源图片:', imageUrl);
+        
+        // 临时解决方案：通过浏览器本地存储同步图片URL
+        localStorage.setItem('yirenzhixiaImageUrl', imageUrl);
+        
+        alert('"一人之下"资源图片已更新到本地存储，shouye页面将自动使用新图片');
+    } catch (error) {
+        console.error('更新shouye.js文件失败:', error);
+        alert('更新shouye页面图片失败');
     }
 }
 
