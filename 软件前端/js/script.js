@@ -79,11 +79,13 @@ function displayResources(resources) {
             <td>${resource.director}</td>
             <td>${resource.producer || '-'}</td>
             <td>${resource.category || '-'}</td>
+            <td>${resource.country || '-'}</td>
             <td>
                 <span class="status ${resource.status === '可观看' ? 'available' : 'borrowed'}">
                     ${resource.status}
                 </span>
             </td>
+            <td>${resource.description || '-'}</td>
             <td>
                 <button onclick="editResource(${resource.resourceID})" class="btn-primary">编辑</button>
                 <button onclick="deleteResource(${resource.resourceID})" class="btn-danger">删除</button>
@@ -158,6 +160,8 @@ function showAddForm() {
     document.getElementById('directorInput').value = '';
     document.getElementById('producerInput').value = '';
     document.getElementById('categoryInput').value = '';
+    document.getElementById('countryInput').value = '';
+    document.getElementById('descriptionInput').value = '';
     document.getElementById('statusSelect').value = '可观看';
     document.getElementById('resourceModal').style.display = 'flex';
 }
@@ -175,6 +179,8 @@ async function editResource(resourceId) {
         document.getElementById('directorInput').value = resource.director;
         document.getElementById('producerInput').value = resource.producer || '';
         document.getElementById('categoryInput').value = resource.category || '';
+        document.getElementById('countryInput').value = resource.country || '';
+        document.getElementById('descriptionInput').value = resource.description || '';
         document.getElementById('statusSelect').value = resource.status;
         document.getElementById('resourceModal').style.display = 'flex';
       } catch (error) {
@@ -193,6 +199,8 @@ async function saveResource(event) {
         director: document.getElementById('directorInput').value,
         producer: document.getElementById('producerInput').value,
         category: document.getElementById('categoryInput').value,
+        country: document.getElementById('countryInput').value,
+        description: document.getElementById('descriptionInput').value,
         status: document.getElementById('statusSelect').value
     };
     

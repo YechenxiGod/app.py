@@ -517,6 +517,23 @@ p {
     background: transparent;
 }
 
+/* 卡片背景图片设置 */
+#home-bg {
+    background-image: url('../img/【哲风壁纸】动漫-灰原.png');
+}
+
+#categories-bg {
+    background-image: url('../img/【哲风壁纸】可爱-名侦探柯南.png');
+}
+
+#forum-bg {
+    background-image: url('../img/【哲风壁纸】名侦探柯南-灰原哀.png');
+}
+
+#profile-bg {
+    background-image: url('../img/【哲风壁纸】二次元-名侦探柯南.png');
+}
+
 /* 卡片图标样式 */
 .card-icon {
     font-size: 50px;

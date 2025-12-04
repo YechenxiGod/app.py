@@ -11,25 +11,40 @@
     <div class="sidebar">
         <div class="nav-item">首页</div>
         <div class="nav-item">日漫</div>
-        <div class="nav-item">台配/国配</div>
         <div class="nav-item">国漫</div>
         <div class="nav-item">美漫</div>
         <div class="nav-item">电影</div>
-        <div class="nav-item">剧集</div>
     </div>
     
     <!-- 背景容器 - 默认显示静音视频，交互后切换到有声音视频 -->
     <div class="background-container">
-        <!-- 静音预览视频 - 默认显示 -->
-        <video class="background-video" id="previewVideo" autoplay muted loop playsinline>
-            <source src="../img/【哲风壁纸】动态壁纸-动漫-简约.mp4" type="video/mp4">
+        <!-- 静音视频 (初始播放) -->
+        <video class="background-video" id="mutedVideo" autoplay muted loop playsinline>
+            <source src="../img/【哲风壁纸】动态壁纸-动漫-简约.mp4?v=1" type="video/mp4">
             您的浏览器不支持视频播放
         </video>
-        <!-- 有声音视频 - 默认隐藏 -->
-        <video class="background-video" id="mainVideo" loop playsinline style="display: none;">
+        
+        <!-- 有声音视频 (交互后播放) -->
+        <video class="background-video" id="soundVideo" loop playsinline style="display: none;">
             <source src="../img/chaoran.mp4" type="video/mp4">
             您的浏览器不支持视频播放
         </video>
+        
+        <!-- 备用背景 -->
+        <div class="video-fallback">
+            <div class="fallback-gradient"></div>
+        </div>
+        
+        <!-- 视频加载指示器 -->
+        <div class="video-loading" id="videoLoading">
+            正在加载背景视频...
+        </div>
+        
+        <!-- 交互提示 -->
+        <div class="interaction-hint" id="interactionHint">
+            点击页面任意位置启用背景声音
+        </div>
+        
         <div class="background-overlay"></div>
     </div>
 
@@ -51,6 +66,6 @@
         </div>
     </div>
 
-    <script src="../js/shouye.js"></script>
+    <script src="../js/shouye.js?v=1.1"></script>
 </body>
 </html>

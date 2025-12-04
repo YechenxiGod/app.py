@@ -58,8 +58,8 @@ class BackgroundManager {
         // 初始化背景切换机制
         this.initializeBackgroundSwitch();
         
-        // 初始化动漫与特摄剧相关卡片背景图片
-        this.initializeCardBackgrounds();
+        // 卡片背景图片已在CSS中设置，禁用JavaScript中的设置以避免冲突
+        // this.initializeCardBackgrounds();
     }
 
     // 初始化背景切换机制
@@ -154,48 +154,7 @@ class BackgroundManager {
         }
     }
 
-    // 初始化卡片背景图片
-    initializeCardBackgrounds() {
-        // 为四个卡片分别设置动漫与特摄剧相关背景图片
-        const cardBackgrounds = [
-            { id: 'home-bg', image: '【哲风壁纸】动漫-灰原.png' },         // 动漫首页卡片背景
-            { id: 'categories-bg', image: '【哲风壁纸】名侦探柯南-灰原哀.png' }, // 分类浏览卡片背景
-            { id: 'forum-bg', image: '【哲风壁纸】可爱-名侦探柯南.png' },         // 动漫讨论社区卡片背景
-            { id: 'profile-bg', image: '【哲风壁纸】二次元-名侦探柯南.png' }      // 个人收藏卡片背景
-        ];
-
-        // 设置每个卡片的背景图片
-        cardBackgrounds.forEach(card => {
-            const element = document.getElementById(card.id);
-            if (element) {
-                this.setCardBackground(element, card.image);
-            }
-        });
-    }
-
-    // 设置卡片背景图片
-    setCardBackground(element, imageSrc) {
-        // 设置背景图片
-        element.style.backgroundImage = `url('${imageSrc}')`;
-        console.log(`为卡片 ${element.id} 设置背景图片: ${imageSrc}`);
-
-        // 创建图片对象来预加载和检查图片
-        const img = new Image();
-        img.src = imageSrc;
-
-        // 图片加载成功
-        img.onload = () => {
-            console.log(`卡片背景图片 ${imageSrc} 加载成功`);
-            element.classList.add('loaded');
-        };
-
-        // 图片加载失败
-        img.onerror = () => {
-            console.log(`卡片背景图片 ${imageSrc} 加载失败，使用备用背景`);
-            element.style.backgroundColor = 'rgba(90, 120, 232, 0.2)';
-            element.style.backgroundImage = 'none';
-        };
-    }
+    // 卡片背景图片已在CSS中设置，删除JavaScript中的设置代码以避免冲突
 
     // 视频加载失败处理
     handleVideoError() {

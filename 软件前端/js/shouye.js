@@ -1,6 +1,7 @@
 // 动漫与特摄剧管理系统 - 视频背景管理器
 class VideoBackgroundManager {
     constructor() {
+        this.videoSwitched = false; // 标记是否已切换到有声音视频
         // 初始化视频切换机制
         this.initializeVideoSwitch();
     }
@@ -8,28 +9,67 @@ class VideoBackgroundManager {
     // 初始化视频切换机制
     initializeVideoSwitch() {
         // 获取视频元素
-        this.previewVideo = document.getElementById('previewVideo');
-        this.mainVideo = document.getElementById('mainVideo');
+        this.mutedVideo = document.getElementById('mutedVideo');
+        this.soundVideo = document.getElementById('soundVideo');
+        this.videoFallback = document.querySelector('.video-fallback');
+        this.videoLoading = document.getElementById('videoLoading');
+        this.interactionHint = document.getElementById('interactionHint');
         
-        if (!this.previewVideo || !this.mainVideo) {
+        if (!this.mutedVideo || !this.soundVideo) {
             console.error('找不到视频元素');
+            this.applyFallbackBackground();
             return;
         }
         
-        // 设置预览视频属性（静音自动播放）
-        this.previewVideo.muted = true;
-        this.previewVideo.loop = true;
-        this.previewVideo.playsInline = true;
-        this.previewVideo.autoplay = true;
+        // 显示加载指示器
+        if (this.videoLoading) this.videoLoading.style.display = 'block';
         
-        // 设置主视频属性（有声音，点击后播放）
-        this.mainVideo.muted = false;
-        this.mainVideo.loop = true;
-        this.mainVideo.playsInline = true;
+        // 设置静音视频属性
+        this.mutedVideo.volume = 0;
+        this.mutedVideo.muted = true;
+        this.mutedVideo.preload = "auto";
         
-        // 添加视频错误处理
-        this.previewVideo.addEventListener('error', () => this.handleVideoError('预览视频'));
-        this.mainVideo.addEventListener('error', () => this.handleVideoError('主视频'));
+        // 设置有声音视频属性
+        this.soundVideo.volume = 0.5;
+        this.soundVideo.muted = true; // 初始为静音，交互后自动取消静音
+        this.soundVideo.preload = "auto";
+        
+        // 静音视频加载成功事件
+        this.mutedVideo.addEventListener('loadeddata', () => {
+            console.log('静音视频数据已加载');
+            if (this.videoFallback) this.videoFallback.style.display = 'none';
+            if (this.videoLoading) this.videoLoading.style.display = 'none';
+        });
+        
+        // 有声音视频加载成功事件
+        this.soundVideo.addEventListener('loadeddata', () => {
+            console.log('有声音视频数据已加载');
+        });
+        
+        // 视频错误处理
+        this.mutedVideo.addEventListener('error', (e) => {
+            console.error('静音视频加载错误:', e);
+            this.applyFallbackBackground();
+        });
+        
+        this.soundVideo.addEventListener('error', (e) => {
+            console.error('有声音视频加载错误:', e);
+        });
+        
+        // 视频播放结束重新开始
+        this.mutedVideo.addEventListener('ended', () => {
+            this.mutedVideo.currentTime = 0;
+            this.mutedVideo.play().catch(e => {
+                console.log('静音视频循环播放失败:', e);
+            });
+        });
+        
+        this.soundVideo.addEventListener('ended', () => {
+            this.soundVideo.currentTime = 0;
+            this.soundVideo.play().catch(e => {
+                console.log('有声音视频循环播放失败:', e);
+            });
+        });
         
         // 设置交互监听器
         this.setupInteraction();
@@ -39,6 +79,28 @@ class VideoBackgroundManager {
         
         // 初始优化
         this.optimizeVideoForScreen();
+        
+        // 5秒后自动隐藏提示
+        if (this.interactionHint) {
+            setTimeout(() => {
+                this.interactionHint.style.display = 'none';
+            }, 5000);
+        }
+        
+        // 确保视频在页面可见时播放
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+                if (this.videoSwitched && this.soundVideo.paused) {
+                    this.soundVideo.play().catch(e => {
+                        console.log('页面恢复后有声音视频播放失败:', e);
+                    });
+                } else if (!this.videoSwitched && this.mutedVideo.paused) {
+                    this.mutedVideo.play().catch(e => {
+                        console.log('页面恢复后静音视频播放失败:', e);
+                    });
+                }
+            }
+        });
     }
     
     // 设置交互监听器
@@ -61,121 +123,68 @@ class VideoBackgroundManager {
     
     // 处理用户交互
     handleInteraction() {
-        // 如果预览视频仍在显示（即还没有切换到主视频）
-        if (this.previewVideo.style.display !== 'none') {
-            this.switchToMainVideo();
-            // 移除事件监听器，防止重复切换
-            document.removeEventListener('click', this.handleInteraction.bind(this));
-            document.removeEventListener('touchstart', this.handleInteraction.bind(this));
-            
-
+        if (!this.videoSwitched) {
+            this.switchToSoundVideo();
         }
     }
     
-    // 切换到主视频（有声音）
-    switchToMainVideo() {
-        console.log('切换到有声音的主视频');
+    // 切换到有声音视频
+    switchToSoundVideo() {
+        this.videoSwitched = true;
         
-        // 淡出预览视频
-        this.previewVideo.style.opacity = '0';
-        this.previewVideo.style.transition = 'opacity 0.8s ease';
+        // 停止静音视频
+        this.mutedVideo.pause();
+        this.mutedVideo.style.display = 'none';
         
-        // 准备主视频
-        this.mainVideo.style.display = 'block';
-        this.mainVideo.style.opacity = '0';
-        this.mainVideo.style.transition = 'opacity 0.8s ease';
+        // 显示有声音视频
+        this.soundVideo.style.display = 'block';
         
-        // 尝试播放主视频
-        this.mainVideo.play().then(() => {
-            console.log('主视频播放成功');
-            
-            // 显示主视频
-            setTimeout(() => {
-                this.mainVideo.style.opacity = '1';
-            }, 100);
-            
-            // 完全隐藏预览视频
-            setTimeout(() => {
-                this.previewVideo.style.display = 'none';
-            }, 800);
-            
-        }).catch(error => {
-            console.error('主视频播放失败:', error);
-            
-            // 恢复预览视频
-            this.previewVideo.style.opacity = '1';
-            this.mainVideo.style.display = 'none';
-            
-            // 尝试备用方案：静音播放主视频
-            this.tryAlternativePlayback();
-        });
-    }
-    
-    // 尝试备用播放方案
-    tryAlternativePlayback() {
-        console.log('尝试备用播放方案：静音播放主视频');
+        // 尝试播放有声音视频
+        const playPromise = this.soundVideo.play();
         
-        // 静音播放主视频
-        this.mainVideo.muted = true;
-        
-        this.mainVideo.play().then(() => {
-            console.log('备用方案成功：静音播放主视频');
-            
-            // 显示主视频
-            setTimeout(() => {
-                this.mainVideo.style.opacity = '1';
-            }, 100);
-            
-            // 完全隐藏预览视频
-            setTimeout(() => {
-                this.previewVideo.style.display = 'none';
-            }, 800);
-            
-
-            
-        }).catch(err => {
-            console.error('备用方案也失败:', err);
-            this.applyFallbackBackground();
-        });
+        if (playPromise !== undefined) {
+            playPromise.then(() => {
+                // 视频播放成功
+                console.log('有声音视频播放成功');
+                if (this.videoLoading) this.videoLoading.style.display = 'none';
+                if (this.interactionHint) this.interactionHint.style.display = 'none';
+                
+                // 设置初始音量并确保有声音
+                this.soundVideo.volume = 0.5;
+                this.soundVideo.muted = false;
+            }).catch((error) => {
+                // 视频播放被阻止
+                console.log('有声音视频播放被阻止:', error);
+                if (this.videoLoading) this.videoLoading.style.display = 'none';
+                this.applyFallbackBackground();
+            });
+        }
     }
     
     // 根据屏幕尺寸优化视频显示
     optimizeVideoForScreen() {
         const isMobile = window.innerWidth <= 768;
-        const videos = [this.previewVideo, this.mainVideo];
         
-        videos.forEach(video => {
-            if (video) {
-                if (isMobile) {
-                    video.style.width = '120%';
-                    video.style.height = '120%';
-                } else {
-                    video.style.width = '100%';
-                    video.style.height = '100%';
-                }
+        // 优化静音视频
+        if (this.mutedVideo) {
+            if (isMobile) {
+                this.mutedVideo.style.width = '120%';
+                this.mutedVideo.style.height = '120%';
+            } else {
+                this.mutedVideo.style.width = '100%';
+                this.mutedVideo.style.height = '100%';
             }
-        });
-    }
-    
-    // 视频加载错误处理
-    handleVideoError(videoType) {
-        console.error(`${videoType}加载失败`);
+        }
         
-        if (videoType === '预览视频') {
-            // 如果预览视频失败，尝试直接播放主视频（但静音）
-            this.previewVideo.style.display = 'none';
-            this.mainVideo.muted = true;
-            this.mainVideo.style.display = 'block';
-            this.mainVideo.style.opacity = '1';
-            
-            this.mainVideo.play().catch(err => {
-                console.error('直接播放主视频失败:', err);
-                this.applyFallbackBackground();
-            });
-        } else if (videoType === '主视频') {
-            // 如果主视频失败，保持使用预览视频
-            this.previewVideo.style.opacity = '1';
-            this.mainVideo.style.display = 'none';
+        // 优化有声音视频
+        if (this.soundVideo) {
+            if (isMobile) {
+                this.soundVideo.style.width = '120%';
+                this.soundVideo.style.height = '120%';
+            } else {
+                this.soundVideo.style.width = '100%';
+                this.soundVideo.style.height = '100%';
+            }
         }
     }
     
@@ -183,9 +192,9 @@ class VideoBackgroundManager {
     applyFallbackBackground() {
         console.log('应用后备背景');
         
-        // 隐藏所有视频
-        if (this.previewVideo) this.previewVideo.style.display = 'none';
-        if (this.mainVideo) this.mainVideo.style.display = 'none';
+        // 隐藏视频
+        if (this.mutedVideo) this.mutedVideo.style.display = 'none';
+        if (this.soundVideo) this.soundVideo.style.display = 'none';
         
         // 添加渐变背景
         const container = document.querySelector('.background-container');
@@ -193,7 +202,10 @@ class VideoBackgroundManager {
             container.style.background = 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)';
         }
         
-
+        // 显示备用背景
+        if (this.videoFallback) {
+            this.videoFallback.style.display = 'block';
+        }
     }
 }
 
@@ -361,44 +373,6 @@ class ContentManager {
                 ImageURL: 'https://picsum.photos/seed/naruto/400/600'
             },
             
-            // 特摄
-            {
-                ResourceID: 11,
-                Code: 'TS-001',
-                Name: '假面骑士01',
-                Director: '杉原辉昭',
-                Studio: '东映',
-                Category: '特摄',
-                Country: '日本',
-                Description: '人工智能时代的假面骑士故事。',
-                Status: '可观看',
-                ImageURL: 'https://picsum.photos/seed/kamenrider01/400/600'
-            },
-            {
-                ResourceID: 12,
-                Code: 'TS-002',
-                Name: '泽塔奥特曼',
-                Director: '田口清隆',
-                Studio: '圆谷制作',
-                Category: '特摄',
-                Country: '日本',
-                Description: '新生代奥特曼泽塔保卫地球的故事。',
-                Status: '可观看',
-                ImageURL: 'https://picsum.photos/seed/ultramanzett/400/600'
-            },
-            {
-                ResourceID: 13,
-                Code: 'TS-003',
-                Name: '铠甲勇士',
-                Director: '郑国伟',
-                Studio: '奥飞娱乐',
-                Category: '特摄',
-                Country: '中国',
-                Description: '中国特摄英雄铠甲勇士与邪恶势力战斗的故事。',
-                Status: '可观看',
-                ImageURL: 'https://picsum.photos/seed/kaijiayongshi/400/600'
-            },
-            
             // 美漫
             {
                 ResourceID: 14,
@@ -435,32 +409,6 @@ class ContentManager {
                 Description: '彼得·帕克获得超能力后成为蜘蛛侠的故事。',
                 Status: '可观看',
                 ImageURL: 'https://picsum.photos/seed/spiderman/400/600'
-            },
-            
-            // 短剧
-            {
-                ResourceID: 17,
-                Code: 'DR-001',
-                Name: '琉璃',
-                Director: '尹涛',
-                Studio: '欢瑞世纪',
-                Category: '仙侠',
-                Country: '中国',
-                Description: '褚璇玑与禹司凤跨越十生十世的爱情故事。',
-                Status: '可观看',
-                ImageURL: 'https://picsum.photos/seed/liuli/400/600'
-            },
-            {
-                ResourceID: 18,
-                Code: 'DR-002',
-                Name: '山河令',
-                Director: '成志超',
-                Studio: '慈文传媒',
-                Category: '武侠',
-                Country: '中国',
-                Description: '周子舒与温客行相识相知的江湖故事。',
-                Status: '可观看',
-                ImageURL: 'https://picsum.photos/seed/shanhelin/400/600'
             },
             
             // 电影
@@ -507,6 +455,59 @@ class ContentManager {
     initialize() {
         this.loadAndRenderPopularContent();
         this.loadAndRenderCarousel();
+        this.setupSidebarNavigation();
+    }
+    
+    // 设置侧边栏导航
+    setupSidebarNavigation() {
+        const navItems = document.querySelectorAll('.sidebar .nav-item');
+        
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const category = item.textContent.trim();
+                this.filterPopularContent(category);
+                
+                // 为当前点击的导航项添加激活状态
+                navItems.forEach(nav => nav.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    }
+    
+    // 筛选热门推荐内容
+    async filterPopularContent(category) {
+        if (!this.popularContentElement) return;
+        
+        try {
+            // 获取所有资源数据
+            const allResources = await this.fetchPopularContent();
+            let filteredResources = allResources;
+            
+            // 根据分类筛选
+            switch (category) {
+                case '日漫':
+                    filteredResources = allResources.filter(resource => resource.country === '日本');
+                    break;
+                case '国漫':
+                    filteredResources = allResources.filter(resource => resource.country === '中国');
+                    break;
+                case '美漫':
+                    filteredResources = allResources.filter(resource => resource.country === '美国');
+                    break;
+                case '电影':
+                    filteredResources = allResources.filter(resource => resource.category === '动画电影');
+                    break;
+                case '首页':
+                default:
+                    filteredResources = allResources;
+                    break;
+            }
+            
+            // 渲染筛选后的内容
+            this.renderPopularContent(filteredResources);
+        } catch (error) {
+            console.error('筛选热门推荐失败:', error);
+        }
     }
     
     // 获取热门推荐数据 - 更新为使用与管理后台相同的API
@@ -516,14 +517,36 @@ class ContentManager {
             const response = await fetch(`${this.API_BASE_URL}/resources`);
             if (response.ok) {
                 const data = await response.json();
-                // 返回所有数据
-                return data;
+                // 返回所有数据，并转换字段名
+                return data.map(resource => ({
+                    resourceID: resource.ResourceID || resource.resourceID,
+                    code: resource.Code || resource.code,
+                    title: resource.Name || resource.title,
+                    director: resource.Director || resource.director,
+                    producer: resource.Studio || resource.producer,
+                    category: resource.Category || resource.category,
+                    country: resource.Country || resource.country,
+                    description: resource.Description || resource.description,
+                    status: resource.Status || resource.status,
+                    imageUrl: resource.ImageURL || resource.imageUrl
+                }));
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
             console.log('API调用失败，使用模拟数据:', error);
-            // 返回所有模拟数据作为热门推荐，包含国漫、日漫、特摄、美漫、短剧、电影等类别
-            return this.mockResources;
+            // 返回模拟数据，并转换为与API相同的字段名格式
+            return this.mockResources.map(resource => ({
+                resourceID: resource.ResourceID,
+                code: resource.Code,
+                title: resource.Name,
+                director: resource.Director,
+                producer: resource.Studio,
+                category: resource.Category,
+                country: resource.Country,
+                description: resource.Description,
+                status: resource.Status,
+                imageUrl: resource.ImageURL
+            }));
         }
     }
     
@@ -555,15 +578,15 @@ class ContentManager {
             const statusClass = resource.status === '可观看' ? 'status-available' : 'status-unavailable';
             
             item.innerHTML = `
-                <img src="https://picsum.photos/seed/${resource.resourceID}/400/600" alt="${resource.title}">
+                <img src="${resource.imageUrl || 'https://picsum.photos/seed/default/400/600'}" alt="${resource.title}">
                 <span class="content-status ${statusClass}">${resource.status || '可观看'}</span>
                 <div class="popular-item-info">
                     <div class="popular-item-title">${resource.title}</div>
                     <div class="popular-item-meta">
                         <span>${resource.category || '未知'}</span>
-                        <span>未知</span>
+                        <span>${resource.country || '未知'}</span>
                     </div>
-                    <div class="popular-item-desc">暂无简介</div>
+                    <div class="popular-item-desc">${resource.description || '暂无简介'}</div>
                     <div class="popular-item-details">
                         <small>导演：${resource.director || '未知'}</small>
                         <small>工作室：${resource.producer || '未知'}</small>
@@ -588,17 +611,43 @@ class ContentManager {
             const response = await fetch(`${this.API_BASE_URL}/resources`);
             if (response.ok) {
                 const data = await response.json();
-                // 随机排序并固定返回7个轮播项
-                return [...data].sort(() => 0.5 - Math.random()).slice(0, 7);
+                // 随机排序并固定返回7个轮播项，同时转换字段名
+                return [...data]
+                    .sort(() => 0.5 - Math.random())
+                    .slice(0, 7)
+                    .map(resource => ({
+                        resourceID: resource.ResourceID || resource.resourceID,
+                        code: resource.Code || resource.code,
+                        title: resource.Name || resource.title,
+                        director: resource.Director || resource.director,
+                        producer: resource.Studio || resource.producer,
+                        category: resource.Category || resource.category,
+                        country: resource.Country || resource.country,
+                        description: resource.Description || resource.description,
+                        status: resource.Status || resource.status,
+                        imageUrl: resource.ImageURL || resource.imageUrl
+                    }));
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
-            console.log('轮播图API调用失败，使用模拟数据（从热门推荐中随机抽取）:', error);
-            // 从热门推荐数据中随机抽取7个作为轮播图内容
-            // 首先获取热门推荐数据
-            const popularData = await this.fetchPopularContent();
-            // 然后从热门推荐中随机选择7个
-            return [...popularData].sort(() => 0.5 - Math.random()).slice(0, 7);
+            console.log('轮播图API调用失败，使用模拟数据:', error);
+            // 从模拟数据中随机选择7个，并转换为与API相同的字段名格式
+            const carouselData = [...this.mockResources]
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 7)
+                .map(resource => ({
+                    resourceID: resource.ResourceID,
+                    code: resource.Code,
+                    title: resource.Name,
+                    director: resource.Director,
+                    producer: resource.Studio,
+                    category: resource.Category,
+                    country: resource.Country,
+                    description: resource.Description,
+                    status: resource.Status,
+                    imageUrl: resource.ImageURL
+                }));
+            return carouselData;
         }
     }
     
@@ -631,13 +680,13 @@ class ContentManager {
             slide.className = 'carousel-slide';
             
             slide.innerHTML = `
-                <img src="https://picsum.photos/seed/${item.resourceID}/1200/400" alt="${item.title}">
+                <img src="${item.imageUrl || 'https://picsum.photos/seed/default/1200/400'}" alt="${item.title}">
                 <div class="carousel-slide-content">
                     <h3 class="carousel-slide-title">${item.title}</h3>
-                    <p class="carousel-slide-desc">暂无简介</p>
+                    <p class="carousel-slide-desc">${item.description || '暂无简介'}</p>
                     <div class="carousel-slide-meta">
                         <span>类型: ${item.category || '未知'}</span>
-                        <span>国家: 未知</span>
+                        <span>国家: ${item.country || '未知'}</span>
                         <span>导演: ${item.director || '未知'}</span>
                         <span>状态: ${item.status || '可观看'}</span>
                     </div>
@@ -757,6 +806,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // 初始化内容管理器
     const contentManager = new ContentManager();
     contentManager.initialize();
+    
+    // 为首页导航项添加默认激活状态
+    const homeNavItem = document.querySelector('.sidebar .nav-item:first-child');
+    if (homeNavItem) {
+        homeNavItem.classList.add('active');
+    }
     
     console.log('动漫与特摄剧管理系统内容管理器初始化完成');
 });
