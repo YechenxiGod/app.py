@@ -232,97 +232,270 @@ class ContentManager {
         this.popularContentElement = document.getElementById('popular-content');
         this.carouselContainerElement = document.getElementById('carousel-container');
         
-        // Mock数据 - 当API不可用时使用
+        // 从数据库获取的资源数据
         this.mockResources = [
+            // 国漫
             {
                 ResourceID: 1,
-                Code: 'AN001',
-                Name: '海贼王',
-                Category: '动画',
-                Country: '日本',
-                Description: '讲述了路飞为了实现与因救他而断臂的香克斯的约定而出海，在旅途中不断寻找志同道合的伙伴，一起向着伟大航线进发，目标是成为海贼王。',
-                ImageURL: 'https://picsum.photos/seed/onepiece/400/600'
-            },
-            {
-                ResourceID: 2,
-                Code: 'AN002',
+                Code: 'CM-001',
                 Name: '斗罗大陆',
-                Category: '动画',
+                Director: '沈乐平',
+                Studio: '玄机科技',
+                Category: '玄幻',
                 Country: '中国',
-                Description: '唐三因偷学内门绝学为唐门所不容，跳崖明志时却发现没有死，反而穿越到了另一个世界，一个属于武魂的世界。',
+                Description: '改编自唐家三少的同名小说，讲述唐三在斗罗大陆上的成长故事。',
+                Status: '可观看',
                 ImageURL: 'https://picsum.photos/seed/douluo/400/600'
             },
             {
-                ResourceID: 3,
-                Code: 'AN003',
-                Name: '完美世界',
-                Category: '动画',
+                ResourceID: 2,
+                Code: 'CM-002',
+                Name: '一人之下',
+                Director: '李豪凌',
+                Studio: '绘梦动画',
+                Category: '奇幻',
                 Country: '中国',
-                Description: '一粒尘可填海，一根草斩尽日月星辰，弹指间天翻地覆。群雄并起，万族林立，诸圣争霸，乱天动地。问苍茫大地，谁主沉浮？',
-                ImageURL: 'https://picsum.photos/seed/wanmei/400/600'
+                Description: '普通青年张楚岚意外卷入异人世界的冒险故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/yirenzhixia/400/600'
+            },
+            {
+                ResourceID: 3,
+                Code: 'CM-003',
+                Name: '凡人修仙传',
+                Director: '王裕仁',
+                Studio: '万维猫动画',
+                Category: '修仙',
+                Country: '中国',
+                Description: '平凡少年韩立通过努力一步步成为修仙界传奇的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/fanrenxiuxianzhuan/400/600'
             },
             {
                 ResourceID: 4,
-                Code: 'AN004',
-                Name: '火影忍者',
-                Category: '动画',
-                Country: '日本',
-                Description: '故事成功地将原本隐藏在黑暗中，用世界上最强大的毅力和最艰辛的努力去做最密不可宣和隐讳残酷的事情的忍者，描绘成了太阳下最值得骄傲最光明无限的职业。',
-                ImageURL: 'https://picsum.photos/seed/naruto/400/600'
+                Code: 'CM-004',
+                Name: '完美世界',
+                Director: '王裕仁',
+                Studio: '福煦影视',
+                Category: '玄幻',
+                Country: '中国',
+                Description: '石昊在完美世界中成长、战斗的热血故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/wanmeishijie/400/600'
             },
             {
                 ResourceID: 5,
-                Code: 'AN005',
-                Name: '斗破苍穹',
-                Category: '动画',
+                Code: 'CM-005',
+                Name: '灵笼',
+                Director: '董相博',
+                Studio: '艺画开天',
+                Category: '科幻',
                 Country: '中国',
-                Description: '这里是属于斗气的世界，没有花俏艳丽的魔法，有的，仅仅是繁衍到巅峰的斗气！',
-                ImageURL: 'https://picsum.photos/seed/doupocangqiong/400/600'
+                Description: '末日后人类在灯塔上艰难求生的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/linglong/400/600'
             },
+            
+            // 日漫
             {
                 ResourceID: 6,
-                Code: 'AN006',
-                Name: '凡人修仙传',
-                Category: '动画',
-                Country: '中国',
-                Description: '一个普通山村小子，偶然下进入到当地江湖小门派，成了一名记名弟子。他以这样身份，如何在门派中立足，如何以平庸的资质进入到修仙者的行列，靠的只是比别人更多一点点的努力和机遇。',
-                ImageURL: 'https://picsum.photos/seed/fanren/400/600'
+                Code: 'JM-001',
+                Name: '鬼灭之刃',
+                Director: '外崎春雄',
+                Studio: 'ufotable',
+                Category: '热血',
+                Country: '日本',
+                Description: '炭治郎为了让变成鬼的妹妹变回人类，加入鬼杀队的故事。',
+                Status: '已借出',
+                ImageURL: 'https://picsum.photos/seed/kimetsunoyaiba/400/600'
             },
             {
                 ResourceID: 7,
-                Code: 'MO001',
-                Name: '复仇者联盟',
-                Category: '电影',
-                Country: '美国',
-                Description: '一个来自地球之外的威胁，让地球上最强大的超级英雄们不得不团结起来，共同对抗这个可能毁灭地球的敌人。',
-                ImageURL: 'https://picsum.photos/seed/avengers/400/600'
+                Code: 'JM-002',
+                Name: '进击的巨人',
+                Director: '荒木哲郎',
+                Studio: 'WIT STUDIO',
+                Category: '热血',
+                Country: '日本',
+                Description: '人类为了生存与巨人战斗的黑暗奇幻故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/shingekinokyojin/400/600'
             },
             {
                 ResourceID: 8,
-                Code: 'DR001',
-                Name: '山海情',
-                Category: '短剧',
-                Country: '中国',
-                Description: '讲述了二十世纪九十年代以来，在国家扶贫政策的引导下，在福建的对口帮扶下，西海固的人民群众移民搬迁，不断克服各种困难，探索脱贫发展办法，将风沙走石的"干沙滩"建设成寸土寸金的"金沙滩"的故事。',
-                ImageURL: 'https://picsum.photos/seed/shanhaiqing/400/600'
+                Code: 'JM-003',
+                Name: '名侦探柯南',
+                Director: '儿玉兼嗣',
+                Studio: 'TMS Entertainment',
+                Category: '推理',
+                Country: '日本',
+                Description: '高中生侦探工藤新一被灌下毒药后变成小学生江户川柯南，继续破案的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/conan/400/600'
             },
             {
                 ResourceID: 9,
-                Code: 'CA001',
-                Name: '蝙蝠侠：黑暗骑士',
-                Category: '电影',
-                Country: '美国',
-                Description: '蝙蝠侠、戈登警长和检察官哈维·登特组成了一个打击犯罪的"正义联盟"，共同对抗哥谭市的犯罪势力。',
-                ImageURL: 'https://picsum.photos/seed/batman/400/600'
+                Code: 'JM-004',
+                Name: '海贼王',
+                Director: '尾田荣一郎',
+                Studio: '东映动画',
+                Category: '冒险',
+                Country: '日本',
+                Description: '路飞为了成为海贼王而踏上伟大航路的冒险故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/onepiece/400/600'
             },
             {
                 ResourceID: 10,
-                Code: 'CM001',
-                Name: '蜘蛛侠：平行宇宙',
-                Category: '动画电影',
+                Code: 'JM-005',
+                Name: '火影忍者',
+                Director: '伊达勇登',
+                Studio: 'Studio Pierrot',
+                Category: '热血',
+                Country: '日本',
+                Description: '漩涡鸣人成长为火影的励志故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/naruto/400/600'
+            },
+            
+            // 特摄
+            {
+                ResourceID: 11,
+                Code: 'TS-001',
+                Name: '假面骑士01',
+                Director: '杉原辉昭',
+                Studio: '东映',
+                Category: '特摄',
+                Country: '日本',
+                Description: '人工智能时代的假面骑士故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/kamenrider01/400/600'
+            },
+            {
+                ResourceID: 12,
+                Code: 'TS-002',
+                Name: '泽塔奥特曼',
+                Director: '田口清隆',
+                Studio: '圆谷制作',
+                Category: '特摄',
+                Country: '日本',
+                Description: '新生代奥特曼泽塔保卫地球的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/ultramanzett/400/600'
+            },
+            {
+                ResourceID: 13,
+                Code: 'TS-003',
+                Name: '铠甲勇士',
+                Director: '郑国伟',
+                Studio: '奥飞娱乐',
+                Category: '特摄',
+                Country: '中国',
+                Description: '中国特摄英雄铠甲勇士与邪恶势力战斗的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/kaijiayongshi/400/600'
+            },
+            
+            // 美漫
+            {
+                ResourceID: 14,
+                Code: 'AM-001',
+                Name: '复仇者联盟',
+                Director: '乔斯·韦登',
+                Studio: '漫威影业',
+                Category: '超级英雄',
                 Country: '美国',
-                Description: '讲述了普通高中生迈尔斯·莫拉莱斯如何跟随蜘蛛侠彼得·帕克的脚步，成为新一代的蜘蛛侠的故事。',
-                ImageURL: 'https://picsum.photos/seed/spiderverse/400/600'
+                Description: '漫威超级英雄团队复仇者联盟联合对抗威胁的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/avengers/400/600'
+            },
+            {
+                ResourceID: 15,
+                Code: 'AM-002',
+                Name: '正义联盟',
+                Director: '扎克·施奈德',
+                Studio: 'DC影业',
+                Category: '超级英雄',
+                Country: '美国',
+                Description: 'DC超级英雄团队正义联盟保护世界的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/justiceleague/400/600'
+            },
+            {
+                ResourceID: 16,
+                Code: 'AM-003',
+                Name: '蜘蛛侠',
+                Director: '山姆·雷米',
+                Studio: '漫威影业',
+                Category: '超级英雄',
+                Country: '美国',
+                Description: '彼得·帕克获得超能力后成为蜘蛛侠的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/spiderman/400/600'
+            },
+            
+            // 短剧
+            {
+                ResourceID: 17,
+                Code: 'DR-001',
+                Name: '琉璃',
+                Director: '尹涛',
+                Studio: '欢瑞世纪',
+                Category: '仙侠',
+                Country: '中国',
+                Description: '褚璇玑与禹司凤跨越十生十世的爱情故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/liuli/400/600'
+            },
+            {
+                ResourceID: 18,
+                Code: 'DR-002',
+                Name: '山河令',
+                Director: '成志超',
+                Studio: '慈文传媒',
+                Category: '武侠',
+                Country: '中国',
+                Description: '周子舒与温客行相识相知的江湖故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/shanhelin/400/600'
+            },
+            
+            // 电影
+            {
+                ResourceID: 19,
+                Code: 'MV-001',
+                Name: '千与千寻',
+                Director: '宫崎骏',
+                Studio: '吉卜力工作室',
+                Category: '动画电影',
+                Country: '日本',
+                Description: '少女千寻在神灵世界的奇幻冒险。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/spiritedaway/400/600'
+            },
+            {
+                ResourceID: 20,
+                Code: 'MV-002',
+                Name: '你的名字。',
+                Director: '新海诚',
+                Studio: 'CoMix Wave Films',
+                Category: '动画电影',
+                Country: '日本',
+                Description: '男女主角互换身体并寻找彼此的故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/yourname/400/600'
+            },
+            {
+                ResourceID: 21,
+                Code: 'MV-003',
+                Name: '哪吒之魔童降世',
+                Director: '饺子',
+                Studio: '彩条屋影业',
+                Category: '动画电影',
+                Country: '中国',
+                Description: '改编自中国传统神话，讲述哪吒的成长故事。',
+                Status: '可观看',
+                ImageURL: 'https://picsum.photos/seed/nezha/400/600'
             }
         ];
     }
@@ -333,21 +506,21 @@ class ContentManager {
         this.loadAndRenderCarousel();
     }
     
-    // 获取热门推荐数据
+    // 获取热门推荐数据 - 更新为展示所有分类的资源数据
     async fetchPopularContent() {
         try {
             // 尝试从API获取数据
             const response = await fetch('/api/popular');
             if (response.ok) {
                 const data = await response.json();
-                // 随机排序并固定返回12个内容
-                return [...data].sort(() => 0.5 - Math.random()).slice(0, 12);
+                // 返回所有数据
+                return data;
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
             console.log('API调用失败，使用模拟数据:', error);
-            // 随机排序并固定返回12个内容
-            return [...this.mockResources].sort(() => 0.5 - Math.random()).slice(0, 12);
+            // 返回所有模拟数据作为热门推荐，包含国漫、日漫、特摄、美漫、短剧、电影等类别
+            return this.mockResources;
         }
     }
     
@@ -363,23 +536,35 @@ class ContentManager {
         }
     }
     
-    // 渲染热门推荐
+    // 渲染热门推荐 - 更新以支持新的数据结构
     renderPopularContent(resources) {
         if (!this.popularContentElement || !resources || resources.length === 0) return;
         
         // 清空容器
         this.popularContentElement.innerHTML = '';
         
-        // 创建资源卡片
+        // 创建资源卡片 - 包含所有类别（国漫、日漫、特摄、美漫、短剧、电影）
         resources.forEach(resource => {
             const item = document.createElement('div');
             item.className = 'popular-item';
             
+            // 添加状态标签 - 根据资源状态显示不同样式
+            const statusClass = resource.Status === '可观看' ? 'status-available' : 'status-unavailable';
+            
             item.innerHTML = `
                 <img src="${resource.ImageURL || 'https://picsum.photos/seed/' + resource.ResourceID + '/400/600'}" alt="${resource.Name}">
+                <span class="content-status ${statusClass}">${resource.Status || '可观看'}</span>
                 <div class="popular-item-info">
                     <div class="popular-item-title">${resource.Name}</div>
+                    <div class="popular-item-meta">
+                        <span>${resource.Category || '未知'}</span>
+                        <span>${resource.Country || '未知'}</span>
+                    </div>
                     <div class="popular-item-desc">${resource.Description || '暂无简介'}</div>
+                    <div class="popular-item-details">
+                        <small>导演：${resource.Director || '未知'}</small>
+                        <small>工作室：${resource.Studio || '未知'}</small>
+                    </div>
                 </div>
             `;
             
@@ -393,7 +578,7 @@ class ContentManager {
         });
     }
     
-    // 获取轮播图数据
+    // 获取轮播图数据 - 修改为从热门推荐中随机抽取
     async fetchCarouselData() {
         try {
             // 尝试从API获取数据
@@ -405,9 +590,12 @@ class ContentManager {
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
-            console.log('轮播图API调用失败，使用模拟数据:', error);
-            // 随机排序并固定返回7个资源作为轮播图
-            return [...this.mockResources].sort(() => 0.5 - Math.random()).slice(0, 7);
+            console.log('轮播图API调用失败，使用模拟数据（从热门推荐中随机抽取）:', error);
+            // 从热门推荐数据中随机抽取7个作为轮播图内容
+            // 首先获取热门推荐数据
+            const popularData = await this.fetchPopularContent();
+            // 然后从热门推荐中随机选择7个
+            return [...popularData].sort(() => 0.5 - Math.random()).slice(0, 7);
         }
     }
     
@@ -423,7 +611,7 @@ class ContentManager {
         }
     }
     
-    // 渲染轮播图
+    // 渲染轮播图 - 更新以支持新的数据结构
     renderCarousel(items) {
         if (!this.carouselContainerElement || !items || items.length === 0) return;
         
@@ -447,6 +635,8 @@ class ContentManager {
                     <div class="carousel-slide-meta">
                         <span>类型: ${item.Category || '未知'}</span>
                         <span>国家: ${item.Country || '未知'}</span>
+                        <span>导演: ${item.Director || '未知'}</span>
+                        <span>状态: ${item.Status || '可观看'}</span>
                     </div>
                 </div>
             `;
