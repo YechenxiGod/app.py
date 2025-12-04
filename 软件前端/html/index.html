@@ -4,7 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>动漫与特摄剧管理系统后台 - 管理后台</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        body {
+            background-image: url('../img/【哲风壁纸】二次元-风景.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -27,7 +36,7 @@
                         <p class="stat-number available" id="availableResources">0</p>
                     </div>
                     <div class="stat-item">
-                        <h3>已借出</h3>
+                        <h3>已观看人数</h3>
                         <p class="stat-number borrowed" id="borrowedResources">0</p>
                     </div>
                 </div>
@@ -107,7 +116,6 @@
                         <label>状态:</label>
                         <select id="statusSelect">
                             <option value="可观看">可观看</option>
-                            <option value="已借出">已借出</option>
                         </select>
                     </div>
                     
@@ -119,32 +127,16 @@
             </div>
         </div>
 
-        <!-- 借阅/归还模态框 -->
-        <div id="borrowModal" class="modal-overlay" style="display: none;">
-            <div class="modal">
-                <h2 id="borrowModalTitle">借出资源</h2>
-                <div id="borrowModalContent">
-                    <p>借出资源: <strong id="borrowResourceTitle"></strong></p>
-                    <form onsubmit="processBorrowReturn(event)">
-                        <div class="form-group">
-                            <label>借用人姓名: *</label>
-                            <input type="text" id="borrowerNameInput" required>
-                        </div>
-                        <div class="form-group">
-                            <label>备注:</label>
-                            <textarea id="borrowNotesInput" rows="3"></textarea>
-                        </div>
-                        
-                        <div class="form-actions">
-                            <button type="submit" class="btn-primary" id="borrowSubmitBtn">确认借出</button>
-                            <button type="button" onclick="hideBorrowModal()" class="btn-secondary">取消</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
+
     </div>
 
-    <script src="script.js"></script>
+    <script src="../js/script.js"></script>
+    <script>
+        // 页面加载完成后自动加载资源列表
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('页面DOM加载完成，开始初始化数据...');
+            loadResources();
+        });
+    </script>
 </body>
 </html>

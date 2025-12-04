@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端API测试</title>
+    <script>
+        // 页面加载完成后测试API调用
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('页面加载完成，开始测试API调用...');
+            
+            try {
+                const API_BASE_URL = 'http://localhost:5000/api';
+                
+                // 测试获取所有资源
+                console.log('测试获取所有资源API...');
+                const response = await fetch(`${API_BASE_URL}/resources`);
+                console.log(`API响应状态码: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误! 状态: ${response.status}`);
+                }
+                
+                const resources = await response.json();
+                console.log(`获取到 ${resources.length} 条资源数据`);
+                console.log('资源数据:', resources);
+                
+                // 更新页面显示
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<h2>API调用结果</h2><p>获取到 ${resources.length} 条资源数据:</p><ul>`;
+                resources.forEach(resource => {
+                    resultDiv.innerHTML += `<li>${resource.title} (${resource.status})</li>`;
+                });
+                resultDiv.innerHTML += '</ul>';
+                
+            } catch (error) {
+                console.error('API调用失败:', error);
+                document.getElementById('result').innerHTML = `<p style="color: red;">API调用失败: ${error.message}</p>`;
+            }
+        });
+    </script>
+</head>
+<body>
+    <h1>前端API测试页面</h1>
+    <div id="result">正在调用API...</div>
+</body>
+</html>

@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>动漫与特摄剧管理系统 - 用户中心</title>
-    <link rel="stylesheet" href="user.css">
+    <link rel="stylesheet" href="../css/user.css">
 </head>
 <body>
     <!-- 背景容器 - 默认显示图片背景，交互后切换到视频背景 -->
     <div class="background-container">
         <!-- 背景图片 - 默认显示 -->
-        <div class="background-image" id="bgImage" style="background-image: url('【哲风壁纸】个性插画-二次元角色.png');"></div>
+        <div class="background-image" id="bgImage" style="background-image: url('../img/【哲风壁纸】个性插画-二次元角色.png');"></div>
         <!-- 背景视频 - 默认隐藏 -->
         <video class="background-video" id="bgVideo" muted loop playsinline style="display: none;">
-            <source src="Super爱豆的笑容都没你的甜 _ _ 热爱105℃的灰原哀.mp4" type="video/mp4">
+            <source src="../img/Super爱豆的笑容都没你的甜 _ _ 热爱105℃的灰原哀.mp4" type="video/mp4">
         </video>
         <div class="background-overlay"></div>
     </div>
@@ -56,6 +56,6 @@
 
     <button class="logout-btn" onclick="logout()">退出登录</button>
 
-    <script src="user.js"></script>
+    <script src="../js/user.js"></script>
 </body>
 </html>

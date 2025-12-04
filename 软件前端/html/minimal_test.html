@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简测试页面</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .status.available { background-color: #d4edda; color: #155724; padding: 3px 8px; border-radius: 12px; }
+        .status.borrowed { background-color: #f8d7da; color: #721c24; padding: 3px 8px; border-radius: 12px; }
+    </style>
+</head>
+<body>
+    <h1>极简测试页面</h1>
+    <div id="testResult"></div>
+    <table id="testTable">
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>名称</th>
+                <th>导演</th>
+                <th>出品方</th>
+                <th>分类</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody id="testTableBody"></tbody>
+    </table>
+    
+    <script>
+        // 简单的资源加载测试
+        async function testLoad() {
+            const resultDiv = document.getElementById('testResult');
+            const tableBody = document.getElementById('testTableBody');
+            
+            try {
+                resultDiv.textContent = '正在加载资源数据...';
+                
+                // 直接调用API
+                const response = await fetch('http://localhost:5000/api/resources');
+                resultDiv.textContent = `API响应状态: ${response.status}`;
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误! 状态: ${response.status}`);
+                }
+                
+                const resources = await response.json();
+                resultDiv.textContent = `成功获取 ${resources.length} 条资源数据`;
+                
+                // 清空表格
+                tableBody.innerHTML = '';
+                
+                // 添加数据到表格
+                resources.forEach(resource => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${resource.code}</td>
+                        <td>${resource.title}</td>
+                        <td>${resource.director}</td>
+                        <td>${resource.producer || '-'}</td>
+                        <td>${resource.category || '-'}</td>
+                        <td><span class="status ${resource.status === '可观看' ? 'available' : 'borrowed'}">${resource.status}</span></td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+            } catch (error) {
+                resultDiv.textContent = `加载失败: ${error.message}`;
+                console.error('加载失败:', error);
+            }
+        }
+        
+        // 页面加载完成后执行测试
+        window.addEventListener('load', testLoad);
+    </script>
+</body>
+</html>

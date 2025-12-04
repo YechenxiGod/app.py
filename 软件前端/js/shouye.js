@@ -232,6 +232,9 @@ class ContentManager {
         this.popularContentElement = document.getElementById('popular-content');
         this.carouselContainerElement = document.getElementById('carousel-container');
         
+        // API基础URL - 与管理后台保持一致
+        this.API_BASE_URL = 'http://localhost:5000/api';
+        
         // 从数据库获取的资源数据
         this.mockResources = [
             // 国漫
@@ -506,11 +509,11 @@ class ContentManager {
         this.loadAndRenderCarousel();
     }
     
-    // 获取热门推荐数据 - 更新为展示所有分类的资源数据
+    // 获取热门推荐数据 - 更新为使用与管理后台相同的API
     async fetchPopularContent() {
         try {
-            // 尝试从API获取数据
-            const response = await fetch('/api/popular');
+            // 尝试从与管理后台相同的API获取资源数据
+            const response = await fetch(`${this.API_BASE_URL}/resources`);
             if (response.ok) {
                 const data = await response.json();
                 // 返回所有数据
@@ -536,7 +539,7 @@ class ContentManager {
         }
     }
     
-    // 渲染热门推荐 - 更新以支持新的数据结构
+    // 渲染热门推荐 - 更新以支持与管理后台相同的API数据结构
     renderPopularContent(resources) {
         if (!this.popularContentElement || !resources || resources.length === 0) return;
         
@@ -549,21 +552,21 @@ class ContentManager {
             item.className = 'popular-item';
             
             // 添加状态标签 - 根据资源状态显示不同样式
-            const statusClass = resource.Status === '可观看' ? 'status-available' : 'status-unavailable';
+            const statusClass = resource.status === '可观看' ? 'status-available' : 'status-unavailable';
             
             item.innerHTML = `
-                <img src="${resource.ImageURL || 'https://picsum.photos/seed/' + resource.ResourceID + '/400/600'}" alt="${resource.Name}">
-                <span class="content-status ${statusClass}">${resource.Status || '可观看'}</span>
+                <img src="https://picsum.photos/seed/${resource.resourceID}/400/600" alt="${resource.title}">
+                <span class="content-status ${statusClass}">${resource.status || '可观看'}</span>
                 <div class="popular-item-info">
-                    <div class="popular-item-title">${resource.Name}</div>
+                    <div class="popular-item-title">${resource.title}</div>
                     <div class="popular-item-meta">
-                        <span>${resource.Category || '未知'}</span>
-                        <span>${resource.Country || '未知'}</span>
+                        <span>${resource.category || '未知'}</span>
+                        <span>未知</span>
                     </div>
-                    <div class="popular-item-desc">${resource.Description || '暂无简介'}</div>
+                    <div class="popular-item-desc">暂无简介</div>
                     <div class="popular-item-details">
-                        <small>导演：${resource.Director || '未知'}</small>
-                        <small>工作室：${resource.Studio || '未知'}</small>
+                        <small>导演：${resource.director || '未知'}</small>
+                        <small>工作室：${resource.producer || '未知'}</small>
                     </div>
                 </div>
             `;
@@ -578,11 +581,11 @@ class ContentManager {
         });
     }
     
-    // 获取轮播图数据 - 修改为从热门推荐中随机抽取
+    // 获取轮播图数据 - 修改为从API资源中随机抽取
     async fetchCarouselData() {
         try {
-            // 尝试从API获取数据
-            const response = await fetch('/api/carousel');
+            // 尝试从与管理后台相同的API获取资源数据
+            const response = await fetch(`${this.API_BASE_URL}/resources`);
             if (response.ok) {
                 const data = await response.json();
                 // 随机排序并固定返回7个轮播项
@@ -611,7 +614,7 @@ class ContentManager {
         }
     }
     
-    // 渲染轮播图 - 更新以支持新的数据结构
+    // 渲染轮播图 - 更新以支持与管理后台相同的API数据结构
     renderCarousel(items) {
         if (!this.carouselContainerElement || !items || items.length === 0) return;
         
@@ -628,15 +631,15 @@ class ContentManager {
             slide.className = 'carousel-slide';
             
             slide.innerHTML = `
-                <img src="${item.ImageURL || 'https://picsum.photos/seed/' + item.ResourceID + '/1200/400'}" alt="${item.Name}">
+                <img src="https://picsum.photos/seed/${item.resourceID}/1200/400" alt="${item.title}">
                 <div class="carousel-slide-content">
-                    <h3 class="carousel-slide-title">${item.Name}</h3>
-                    <p class="carousel-slide-desc">${item.Description || '暂无简介'}</p>
+                    <h3 class="carousel-slide-title">${item.title}</h3>
+                    <p class="carousel-slide-desc">暂无简介</p>
                     <div class="carousel-slide-meta">
-                        <span>类型: ${item.Category || '未知'}</span>
-                        <span>国家: ${item.Country || '未知'}</span>
-                        <span>导演: ${item.Director || '未知'}</span>
-                        <span>状态: ${item.Status || '可观看'}</span>
+                        <span>类型: ${item.category || '未知'}</span>
+                        <span>国家: 未知</span>
+                        <span>导演: ${item.director || '未知'}</span>
+                        <span>状态: ${item.status || '可观看'}</span>
                     </div>
                 </div>
             `;

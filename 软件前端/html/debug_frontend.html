@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前端详细调试</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        .log { background: #f5f5f5; padding: 10px; margin: 5px 0; border-radius: 5px; font-family: monospace; }
+        .success { color: green; }
+        .error { color: red; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>前端API调用详细调试</h1>
+    <div id="logs"></div>
+    
+    <!-- 资源列表 -->
+    <div class="resource-list">
+        <h2>资源列表</h2>
+        <div id="loadingMessage" class="loading" style="display: none;">加载中...</div>
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <p>暂无资源数据</p>
+        </div>
+        <table id="resourcesTable" style="display: none;">
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>名称</th>
+                    <th>导演/作者</th>
+                    <th>出品方</th>
+                    <th>分类</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody id="resourcesTableBody"></tbody>
+        </table>
+    </div>
+    
+    <script>
+        const logsDiv = document.getElementById('logs');
+        
+        // 日志函数
+        function log(message, type = 'info') {
+            const logDiv = document.createElement('div');
+            logDiv.className = `log ${type}`;
+            logDiv.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
+            logsDiv.appendChild(logDiv);
+            console.log(message);
+        }
+        
+        // 全局变量
+        let currentEditingResourceId = null;
+        const API_BASE_URL = 'http://localhost:5000/api';
+        
+        // 页面加载完成后初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            log('页面加载完成，开始初始化...');
+            loadResources();
+        });
+        
+        // 加载资源列表
+        async function loadResources() {
+            log('开始加载资源列表...');
+            showLoading();
+            
+            try {
+                log('调用API获取资源数据...');
+                const response = await fetch(`${API_BASE_URL}/resources`);
+                log(`API响应状态码: ${response.status}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP错误! 状态: ${response.status}`);
+                }
+                
+                const resources = await response.json();
+                log(`API返回 ${resources.length} 条资源数据: ${JSON.stringify(resources)}`);
+                
+                log('调用displayResources函数显示数据...');
+                displayResources(resources);
+                
+            } catch (error) {
+                log(`加载资源列表失败: ${error}`, 'error');
+                console.error('加载资源列表失败:', error);
+                showEmptyState();
+            }
+        }
+        
+        // 显示资源列表
+        function displayResources(resources) {
+            log('进入displayResources函数...');
+            
+            const tableBody = document.getElementById('resourcesTableBody');
+            const resourcesTable = document.getElementById('resourcesTable');
+            const emptyState = document.getElementById('emptyState');
+            const loadingMessage = document.getElementById('loadingMessage');
+            
+            log(`获取到的DOM元素: tableBody=${tableBody}, resourcesTable=${resourcesTable}, emptyState=${emptyState}, loadingMessage=${loadingMessage}`);
+            
+            loadingMessage.style.display = 'none';
+            
+            if (resources.length === 0) {
+                log('没有资源数据，显示空状态...');
+                resourcesTable.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            log(`有 ${resources.length} 条资源数据，显示表格...`);
+            emptyState.style.display = 'none';
+            resourcesTable.style.display = 'table';
+            
+            tableBody.innerHTML = '';
+            
+            resources.forEach(resource => {
+                log(`处理资源: ${resource.title}`);
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${resource.code}</td>
+                    <td>${resource.title}</td>
+                    <td>${resource.director}</td>
+                    <td>${resource.producer || '-'}</td>
+                    <td>${resource.category || '-'}</td>
+                    <td>
+                        <span class="status ${resource.status === '可观看' ? 'available' : 'borrowed'}">
+                            ${resource.status}
+                        </span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+                log(`已添加资源行: ${resource.title}`);
+            });
+            
+            log('资源列表显示完成');
+        }
+        
+        // 显示加载状态
+        function showLoading() {
+            log('显示加载状态...');
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.style.display = 'block';
+            }
+        }
+        
+        // 显示空状态
+        function showEmptyState() {
+            log('显示空状态...');
+            const emptyState = document.getElementById('emptyState');
+            const resourcesTable = document.getElementById('resourcesTable');
+            const loadingMessage = document.getElementById('loadingMessage');
+            
+            if (loadingMessage) loadingMessage.style.display = 'none';
+            if (emptyState) emptyState.style.display = 'block';
+            if (resourcesTable) resourcesTable.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,6 +1,5 @@
 // 全局变量
 let currentEditingResourceId = null;
-let currentBorrowResourceId = null;
 
 // API基础URL
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -13,11 +12,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
 // 加载资源列表
 async function loadResources() {
+    console.log('进入loadResources函数');
     showLoading();
+    
     try {
-          const response = await fetch(`${API_BASE_URL}/resources`);
-          const resources = await response.json();
-          displayResources(resources);
+        console.log('调用API获取资源数据:', `${API_BASE_URL}/resources`);
+        const response = await fetch(`${API_BASE_URL}/resources`);
+        console.log('API响应状态:', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP错误! 状态: ${response.status}`);
+        }
+        
+        const resources = await response.json();
+        console.log('获取到资源数据:', resources);
+        
+        displayResources(resources);
+        
+        // 同时测试统计数据加载
+        console.log('开始加载统计数据...');
+        loadStats();
+        
     } catch (error) {
         console.error('加载资源列表失败:', error);
         showEmptyState();
@@ -26,25 +41,37 @@ async function loadResources() {
 
 // 显示资源列表
 function displayResources(resources) {
+    console.log('进入displayResources函数，资源数据:', resources);
+    
     const tableBody = document.getElementById('resourcesTableBody');
     const resourcesTable = document.getElementById('resourcesTable');
     const emptyState = document.getElementById('emptyState');
     const loadingMessage = document.getElementById('loadingMessage');
     
+    console.log('DOM元素:', {
+        tableBody: tableBody,
+        resourcesTable: resourcesTable,
+        emptyState: emptyState,
+        loadingMessage: loadingMessage
+    });
+    
     loadingMessage.style.display = 'none';
     
     if (resources.length === 0) {
+        console.log('没有资源数据，显示空状态');
         resourcesTable.style.display = 'none';
         emptyState.style.display = 'block';
         return;
     }
     
+    console.log(`有 ${resources.length} 条资源数据，显示表格`);
     emptyState.style.display = 'none';
     resourcesTable.style.display = 'table';
     
     tableBody.innerHTML = '';
     
-    resources.forEach(resource => {
+    resources.forEach((resource, index) => {
+        console.log(`处理第 ${index + 1} 条资源:`, resource);
         const row = document.createElement('tr');
         row.innerHTML = `
             <td>${resource.code}</td>
@@ -59,15 +86,14 @@ function displayResources(resources) {
             </td>
             <td>
                 <button onclick="editResource(${resource.resourceID})" class="btn-primary">编辑</button>
-                <button onclick="showBorrowModal(${resource.resourceID}, '${resource.status}', '${resource.title}')" 
-                        class="${resource.status === '可观看' ? 'btn-success' : 'btn-secondary'}">
-                    ${resource.status === '可观看' ? '借出' : '归还'}
-                </button>
                 <button onclick="deleteResource(${resource.resourceID})" class="btn-danger">删除</button>
             </td>
         `;
         tableBody.appendChild(row);
+        console.log(`已添加资源行:`, row);
     });
+    
+    console.log('资源列表显示完成');
 }
 
 // 加载统计信息
@@ -228,94 +254,7 @@ async function deleteResource(resourceId) {
     }
 }
 
-// 显示借阅/归还模态框
-function showBorrowModal(resourceId, status, title) {
-    currentBorrowResourceId = resourceId;
-    const isBorrowing = status === '可观看';
-    
-    document.getElementById('borrowModalTitle').textContent = isBorrowing ? '借出资源' : '归还资源';
-    document.getElementById('borrowBookTitle').textContent = title;
-    document.getElementById('borrowerNameInput').value = '';
-    document.getElementById('borrowNotesInput').value = '';
-    document.getElementById('borrowSubmitBtn').textContent = isBorrowing ? '确认借出' : '确认归还';
-    
-    if (!isBorrowing) {
-        document.getElementById('borrowModalContent').innerHTML = `
-            <p>归还资源: <strong>${title}</strong></p>
-            <div class="form-actions">
-                <button onclick="processBorrowReturn(event)" class="btn-primary">确认归还</button>
-                <button onclick="hideBorrowModal()" class="btn-secondary">取消</button>
-            </div>
-        `;
-    }
-    
-    document.getElementById('borrowModal').style.display = 'flex';
-}
 
-// 处理借阅/归还
-async function processBorrowReturn(event) {
-    if (event) event.preventDefault();
-    
-    try {
-        const isBorrowing = document.getElementById('borrowModalTitle').textContent === '借出图书';
-        
-        if (isBorrowing) {
-            // 借出资源
-            const borrowerName = document.getElementById('borrowerNameInput').value.trim();
-            const notes = document.getElementById('borrowNotesInput').value;
-            
-            if (!borrowerName) {
-                alert('请输入借阅人姓名');
-                return;
-            }
-            
-            const response = await fetch(`${API_BASE_URL}/resources/borrow/${currentBorrowResourceId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    borrowerName: borrowerName,
-                    notes: notes
-                })
-            });
-            
-            if (response.ok) {
-                hideBorrowModal();
-                loadResources();
-                loadStats();
-                alert('资源借出成功');
-            } else {
-                alert('借出失败');
-            }
-        } else {
-            // 归还资源
-            const activeRecordsResponse = await fetch(`${API_BASE_URL}/borrow-records/active`);
-            const activeRecords = await activeRecordsResponse.json();
-            const record = activeRecords.find(r => r.resourceID === currentBorrowResourceId);
-            
-            if (record) {
-                const returnResponse = await fetch(`${API_BASE_URL}/borrow-records/${record.recordID}/return`, {
-                    method: 'PUT'
-                });
-                
-                if (returnResponse.ok) {
-                    hideBorrowModal();
-                    loadResources();
-                    loadStats();
-                    alert('资源归还成功');
-                } else {
-                    alert('归还失败');
-                }
-            } else {
-                alert('未找到该资源的借阅记录');
-            }
-        }
-    } catch (error) {
-        console.error('操作失败:', error);
-        alert('操作失败');
-    }
-}
 
 // 辅助函数
 function showLoading() {
@@ -332,10 +271,6 @@ function showEmptyState() {
 
 function hideResourceModal() {
     document.getElementById('resourceModal').style.display = 'none';
-}
-
-function hideBorrowModal() {
-    document.getElementById('borrowModal').style.display = 'none';
 }
 
 // 添加回车键搜索支持

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源数据测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+    </style>
+</head>
+<body>
+    <h1>资源数据测试</h1>
+    <div id="loading">加载中...</div>
+    <div id="data-container" style="display: none;">
+        <h2>获取到的资源数据</h2>
+        <div id="count"></div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Code</th>
+                    <th>Name</th>
+                    <th>Director</th>
+                    <th>Category</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody id="resources-table"></tbody>
+        </table>
+    </div>
+    <div id="error" style="display: none; color: red;"></div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:5000';
+
+        async function fetchResources() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/resources`);
+                if (!response.ok) {
+                    throw new Error(`HTTP错误! 状态: ${response.status}`);
+                }
+                const resources = await response.json();
+                
+                // 显示数据统计
+                document.getElementById('count').textContent = `共获取到 ${resources.length} 条资源数据`;
+                
+                // 显示数据表格
+                const tableBody = document.getElementById('resources-table');
+                tableBody.innerHTML = '';
+                
+                resources.forEach(resource => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${resource.resourceID}</td>
+                        <td>${resource.code}</td>
+                        <td>${resource.title}</td>
+                        <td>${resource.director}</td>
+                        <td>${resource.category}</td>
+                        <td>${resource.status}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                
+                // 更新UI状态
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('data-container').style.display = 'block';
+                
+            } catch (error) {
+                console.error('获取资源数据失败:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').textContent = `获取资源数据失败: ${error.message}`;
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // 页面加载完成后执行
+        document.addEventListener('DOMContentLoaded', fetchResources);
+    </script>
+</body>
+</html>
