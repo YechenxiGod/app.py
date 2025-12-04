@@ -25,12 +25,24 @@ document.querySelectorAll('.feature-card').forEach(card => {
                     break;
                 case 'categories':
                     console.log('动漫与特摄剧分类浏览功能');
+                    // 显示功能尚未开放的提示
+                    setTimeout(() => {
+                        showNotification('该功能尚未开放，敬请期待');
+                    }, 500);
                     break;
                 case 'forum':
                     console.log('动漫与特摄剧讨论社区功能');
+                    // 显示功能尚未开放的提示
+                    setTimeout(() => {
+                        showNotification('该功能尚未开放，敬请期待');
+                    }, 500);
                     break;
                 case 'profile':
                     console.log('个人收藏与观看历史功能');
+                    // 显示功能尚未开放的提示
+                    setTimeout(() => {
+                        showNotification('该功能尚未开放，敬请期待');
+                    }, 500);
                     break;
             }
         }, 200);

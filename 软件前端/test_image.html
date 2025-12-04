@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        img {
+            max-width: 400px;
+            height: auto;
+            border: 1px solid #ccc;
+        }
+        .test-case {
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>图片加载测试</h1>
+    
+    <div class="test-case">
+        <h2>测试1: 直接从img目录加载</h2>
+        <img src="img/【哲风壁纸】一人之夏-动漫女孩.png" alt="一人之夏图片">
+        <p>路径: img/【哲风壁纸】一人之夏-动漫女孩.png</p>
+    </div>
+    
+    <div class="test-case">
+        <h2>测试2: 从html目录的相对路径加载</h2>
+        <img src="../img/【哲风壁纸】一人之夏-动漫女孩.png" alt="一人之夏图片">
+        <p>路径: ../img/【哲风壁纸】一人之夏-动漫女孩.png</p>
+    </div>
+    
+    <div class="test-case">
+        <h2>测试3: 绝对路径加载</h2>
+        <img src="/img/【哲风壁纸】一人之夏-动漫女孩.png" alt="一人之夏图片">
+        <p>路径: /img/【哲风壁纸】一人之夏-动漫女孩.png</p>
+    </div>
+    
+    <script>
+        // 测试JavaScript中的路径
+        console.log('当前页面URL:', window.location.href);
+        console.log('图片相对路径解析:', new URL('../img/【哲风壁纸】一人之夏-动漫女孩.png', window.location.href).href);
+    </script>
+</body>
+</html>

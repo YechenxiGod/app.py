@@ -517,8 +517,9 @@ class ContentManager {
             const response = await fetch(`${this.API_BASE_URL}/resources`);
             if (response.ok) {
                 const data = await response.json();
+                console.log('使用API数据:', data);
                 // 返回所有数据，并转换字段名
-                return data.map(resource => ({
+                const result = data.map(resource => ({
                     resourceID: resource.ResourceID || resource.resourceID,
                     code: resource.Code || resource.code,
                     title: resource.Name || resource.title,
@@ -530,12 +531,25 @@ class ContentManager {
                     status: resource.Status || resource.status,
                     imageUrl: resource.ImageURL || resource.imageUrl
                 }));
+                console.log('转换后的API数据:', result);
+                
+                // 检查本地存储中是否有"一人之下"资源的图片URL
+                const yirenzhixiaImageUrl = localStorage.getItem('yirenzhixiaImageUrl');
+                if (yirenzhixiaImageUrl) {
+                    // 更新"一人之下"资源的图片URL
+                    const yirenzhixiaIndex = result.findIndex(item => item.title === '一人之下' || item.title === '一人之夏');
+                    if (yirenzhixiaIndex !== -1) {
+                        result[yirenzhixiaIndex].imageUrl = yirenzhixiaImageUrl;
+                    }
+                }
+                
+                return result;
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
             console.log('API调用失败，使用模拟数据:', error);
             // 返回模拟数据，并转换为与API相同的字段名格式
-            return this.mockResources.map(resource => ({
+            const result = this.mockResources.map(resource => ({
                 resourceID: resource.ResourceID,
                 code: resource.Code,
                 title: resource.Name,
@@ -547,6 +561,19 @@ class ContentManager {
                 status: resource.Status,
                 imageUrl: resource.ImageURL
             }));
+            console.log('使用模拟数据:', result);
+            
+            // 检查本地存储中是否有"一人之下"资源的图片URL
+            const yirenzhixiaImageUrl = localStorage.getItem('yirenzhixiaImageUrl');
+            if (yirenzhixiaImageUrl) {
+                // 更新"一人之下"资源的图片URL
+                const yirenzhixiaIndex = result.findIndex(item => item.title === '一人之下' || item.title === '一人之夏');
+                if (yirenzhixiaIndex !== -1) {
+                    result[yirenzhixiaIndex].imageUrl = yirenzhixiaImageUrl;
+                }
+            }
+            
+            return result;
         }
     }
     
