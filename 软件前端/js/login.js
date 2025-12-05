@@ -66,7 +66,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             
             if (result.success) {
-                // 登录成功，跳转到管理员主页面
+                // 登录成功，存储用户信息到localStorage
+                const currentUser = {
+                    username: username,
+                    userType: 'admin',
+                    isAdmin: true
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // 跳转到管理员主页面
                 alert('登录成功！欢迎动漫与特摄剧系统管理员：' + username);
                 window.location.href = 'index.html';
             } else {
@@ -96,7 +105,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const result = await response.json();
             
             if (result.success) {
-                // 登录成功，跳转到用户主页面
+                // 登录成功，存储用户信息到localStorage
+                const currentUser = {
+                    username: username,
+                    userType: 'user',
+                    isAdmin: false
+                };
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
+                sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                
+                // 跳转到用户主页面
                 alert('登录成功！欢迎动漫与特摄剧爱好者：' + username);
                 window.location.href = 'user.html';
             } else {

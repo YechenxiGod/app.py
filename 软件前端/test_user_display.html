@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户信息显示测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            margin: 5px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .user-display {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>用户信息显示测试</h1>
+
+    <div class="test-section">
+        <h2>测试功能</h2>
+        <button onclick="clearUserInfo()">清除用户信息</button>
+        <button onclick="testAdminLogin()">模拟管理员登录 (admin)</button>
+        <button onclick="testUserLogin()">模拟普通用户登录 (user1)</button>
+        <button onclick="testAnotherAdmin()">模拟其他管理员登录 (admin2)</button>
+        <button onclick="testAnotherUser()">模拟其他普通用户登录 (user2)</button>
+    </div>
+
+    <div class="test-section">
+        <h2>测试结果</h2>
+        <div id="localStorageInfo"></div>
+        <div id="sessionStorageInfo"></div>
+        <div id="shouyeDisplay"></div>
+        <div id="indexDisplay"></div>
+    </div>
+
+    <script>
+        // 模拟shouye.js的用户信息显示逻辑
+        function simulateShouyeDisplay() {
+            const shouyeDisplayDiv = document.getElementById('shouyeDisplay');
+            
+            // 从localStorage获取用户信息
+            let userInfo = localStorage.getItem('currentUser');
+            let user = null;
+            
+            // 尝试解析localStorage中的用户信息
+            if (userInfo) {
+                try {
+                    user = JSON.parse(userInfo);
+                } catch (error) {
+                    console.error('解析localStorage用户信息失败:', error);
+                    user = null;
+                }
+            }
+            
+            // 如果localStorage中没有用户信息，尝试从sessionStorage获取
+            if (!user) {
+                userInfo = sessionStorage.getItem('currentUser');
+                if (userInfo) {
+                    try {
+                        user = JSON.parse(userInfo);
+                    } catch (error) {
+                        console.error('解析sessionStorage用户信息失败:', error);
+                        user = null;
+                    }
+                }
+            }
+            
+            // 显示用户名
+            let displayText = '';
+            if (user) {
+                if (user.username) {
+                    if (user.isAdmin) {
+                        // 管理员用户显示"管理员+登录账号"
+                        displayText = `管理员${user.username}`;
+                    } else {
+                        // 普通用户显示用户名
+                        displayText = user.username;
+                    }
+                } else if (user.name) {
+                    displayText = user.name;
+                } else if (user.userName) {
+                    displayText = user.userName;
+                } else {
+                    // 如果有isAdmin字段但没有用户名，根据类型显示默认值
+                    displayText = user.isAdmin ? '管理员' : '用户';
+                }
+            } else {
+                // 未登录状态显示默认值
+                displayText = '请登录';
+            }
+            
+            shouyeDisplayDiv.innerHTML = `<div class="user-display"><strong>shouye页面显示:</strong> ${displayText}</div>`;
+        }
+
+        // 模拟script.js的用户信息显示逻辑
+        function simulateIndexDisplay() {
+            const indexDisplayDiv = document.getElementById('indexDisplay');
+            
+            // 尝试从localStorage或sessionStorage获取用户信息
+            let userInfo = null;
+            try {
+                userInfo = JSON.parse(localStorage.getItem('currentUser')) || JSON.parse(sessionStorage.getItem('currentUser'));
+            } catch (error) {
+                console.error('解析用户信息失败:', error);
+            }
+            
+            // 显示用户名，如果没有则显示默认值
+            let displayText = '';
+            if (userInfo && userInfo.username) {
+                if (userInfo.isAdmin) {
+                    // 管理员用户显示"管理员+登录账号"
+                    displayText = `管理员${userInfo.username}`;
+                } else {
+                    // 普通用户显示用户名
+                    displayText = userInfo.username;
+                }
+            } else {
+                // 未登录状态显示默认值
+                displayText = '请登录';
+            }
+            
+            indexDisplayDiv.innerHTML = `<div class="user-display"><strong>index页面显示:</strong> ${displayText}</div>`;
+        }
+
+        // 清除用户信息
+        function clearUserInfo() {
+            localStorage.removeItem('currentUser');
+            sessionStorage.removeItem('currentUser');
+            updateDisplays();
+        }
+
+        // 测试管理员登录
+        function testAdminLogin() {
+            const adminUser = {
+                username: 'admin',
+                userType: 'admin',
+                isAdmin: true
+            };
+            localStorage.setItem('currentUser', JSON.stringify(adminUser));
+            sessionStorage.setItem('currentUser', JSON.stringify(adminUser));
+            updateDisplays();
+        }
+
+        // 测试普通用户登录
+        function testUserLogin() {
+            const normalUser = {
+                username: 'user1',
+                userType: 'user',
+                isAdmin: false
+            };
+            localStorage.setItem('currentUser', JSON.stringify(normalUser));
+            sessionStorage.setItem('currentUser', JSON.stringify(normalUser));
+            updateDisplays();
+        }
+
+        // 测试其他管理员登录
+        function testAnotherAdmin() {
+            const adminUser = {
+                username: 'admin2',
+                userType: 'admin',
+                isAdmin: true
+            };
+            localStorage.setItem('currentUser', JSON.stringify(adminUser));
+            sessionStorage.setItem('currentUser', JSON.stringify(adminUser));
+            updateDisplays();
+        }
+
+        // 测试其他普通用户登录
+        function testAnotherUser() {
+            const normalUser = {
+                username: 'user2',
+                userType: 'user',
+                isAdmin: false
+            };
+            localStorage.setItem('currentUser', JSON.stringify(normalUser));
+            sessionStorage.setItem('currentUser', JSON.stringify(normalUser));
+            updateDisplays();
+        }
+
+        // 更新所有显示
+        function updateDisplays() {
+            updateStorageInfo();
+            simulateShouyeDisplay();
+            simulateIndexDisplay();
+        }
+
+        // 更新存储信息显示
+        function updateStorageInfo() {
+            const localStorageDiv = document.getElementById('localStorageInfo');
+            const sessionStorageDiv = document.getElementById('sessionStorageInfo');
+            
+            const localStorageUser = localStorage.getItem('currentUser');
+            const sessionStorageUser = sessionStorage.getItem('currentUser');
+            
+            localStorageDiv.innerHTML = `<div class="user-display"><strong>LocalStorage:</strong> ${localStorageUser || '无'}</div>`;
+            sessionStorageDiv.innerHTML = `<div class="user-display"><strong>SessionStorage:</strong> ${sessionStorageUser || '无'}</div>`;
+        }
+
+        // 页面加载时初始化
+        window.onload = updateDisplays;
+    </script>
+</body>
+</html>

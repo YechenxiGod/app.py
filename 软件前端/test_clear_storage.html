@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清除用户信息</title>
+</head>
+<body>
+    <h1>清除用户信息测试页面</h1>
+    <button onclick="clearUserInfo()">清除用户信息</button>
+    <button onclick="testAdminLogin()">测试管理员登录</button>
+    <button onclick="testUserLogin()">测试普通用户登录</button>
+    <button onclick="showUserInfo()">显示当前用户信息</button>
+    <div id="userInfo"></div>
+
+    <script>
+        function clearUserInfo() {
+            localStorage.removeItem('currentUser');
+            sessionStorage.removeItem('currentUser');
+            alert('用户信息已清除');
+            showUserInfo();
+        }
+
+        function testAdminLogin() {
+            const adminUser = {
+                username: 'admin',
+                userType: 'admin',
+                isAdmin: true
+            };
+            localStorage.setItem('currentUser', JSON.stringify(adminUser));
+            sessionStorage.setItem('currentUser', JSON.stringify(adminUser));
+            alert('管理员登录测试完成');
+            showUserInfo();
+        }
+
+        function testUserLogin() {
+            const normalUser = {
+                username: 'user1',
+                userType: 'user',
+                isAdmin: false
+            };
+            localStorage.setItem('currentUser', JSON.stringify(normalUser));
+            sessionStorage.setItem('currentUser', JSON.stringify(normalUser));
+            alert('普通用户登录测试完成');
+            showUserInfo();
+        }
+
+        function showUserInfo() {
+            const userInfoDiv = document.getElementById('userInfo');
+            const localStorageUser = localStorage.getItem('currentUser');
+            const sessionStorageUser = sessionStorage.getItem('currentUser');
+            
+            userInfoDiv.innerHTML = `
+                <h2>当前用户信息：</h2>
+                <p>LocalStorage: ${localStorageUser || '无'}</p>
+                <p>SessionStorage: ${sessionStorageUser || '无'}</p>
+            `;
+        }
+
+        // 页面加载时显示当前用户信息
+        window.onload = showUserInfo;
+    </script>
+</body>
+</html>

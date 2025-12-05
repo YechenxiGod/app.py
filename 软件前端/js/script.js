@@ -8,6 +8,32 @@ const API_BASE_URL = 'http://localhost:5000/api';
 document.addEventListener('DOMContentLoaded', function() {
     loadResources();
     loadStats();
+    
+    // 获取当前用户信息并显示
+    const currentUserInfoElement = document.getElementById('currentUserInfo');
+    if (currentUserInfoElement) {
+        // 尝试从localStorage或sessionStorage获取用户信息
+        let userInfo = null;
+        try {
+            userInfo = JSON.parse(localStorage.getItem('currentUser')) || JSON.parse(sessionStorage.getItem('currentUser'));
+        } catch (error) {
+            console.error('解析用户信息失败:', error);
+        }
+        
+        // 显示用户名，如果没有则显示默认值
+        if (userInfo && userInfo.username) {
+            if (userInfo.isAdmin) {
+                // 管理员用户显示"管理员+登录账号"
+                currentUserInfoElement.textContent = `管理员${userInfo.username}`;
+            } else {
+                // 普通用户显示用户名
+                currentUserInfoElement.textContent = userInfo.username;
+            }
+        } else {
+            // 未登录状态显示默认值
+            currentUserInfoElement.textContent = '请登录';
+        }
+    }
 });
 
 // 加载资源列表

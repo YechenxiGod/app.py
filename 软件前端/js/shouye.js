@@ -840,5 +840,59 @@ document.addEventListener('DOMContentLoaded', function() {
         homeNavItem.classList.add('active');
     }
     
+    // 获取并显示当前用户名字
+    const userNameElement = document.getElementById('currentUserName');
+    if (userNameElement) {
+        // 从localStorage获取用户信息
+        let userInfo = localStorage.getItem('currentUser');
+        let user = null;
+        
+        // 尝试解析localStorage中的用户信息
+        if (userInfo) {
+            try {
+                user = JSON.parse(userInfo);
+            } catch (error) {
+                console.error('解析localStorage用户信息失败:', error);
+                user = null;
+            }
+        }
+        
+        // 如果localStorage中没有用户信息，尝试从sessionStorage获取
+        if (!user) {
+            userInfo = sessionStorage.getItem('currentUser');
+            if (userInfo) {
+                try {
+                    user = JSON.parse(userInfo);
+                } catch (error) {
+                    console.error('解析sessionStorage用户信息失败:', error);
+                    user = null;
+                }
+            }
+        }
+        
+        // 显示用户名
+        if (user) {
+            if (user.username) {
+                if (user.isAdmin) {
+                    // 管理员用户显示"管理员+登录账号"
+                    userNameElement.textContent = `管理员${user.username}`;
+                } else {
+                    // 普通用户显示用户名
+                    userNameElement.textContent = user.username;
+                }
+            } else if (user.name) {
+                userNameElement.textContent = user.name;
+            } else if (user.userName) {
+                userNameElement.textContent = user.userName;
+            } else {
+                // 如果有isAdmin字段但没有用户名，根据类型显示默认值
+                userNameElement.textContent = user.isAdmin ? '管理员' : '用户';
+            }
+        } else {
+            // 未登录状态显示默认值
+            userNameElement.textContent = '请登录';
+        }
+    }
+    
     console.log('动漫与特摄剧管理系统内容管理器初始化完成');
 });
