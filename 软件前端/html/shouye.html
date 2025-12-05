@@ -22,6 +22,7 @@
             </div>
             <div class="user-name" id="currentUserName">管理员</div>
             <button class="switch-btn" onclick="window.location.href='login.html'">切换用户</button>
+            <button class="admin-btn" id="backToAdminBtn" onclick="window.location.href='index.html'">返回管理界面</button>
         </div>
     </div>
     
@@ -72,6 +73,32 @@
         </div>
         <div class="popular-grid" id="popular-content">
             <!-- 内容将通过JavaScript动态生成 -->
+        </div>
+    </div>
+
+    <!-- 图片显示弹窗 -->
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">资源详情</h2>
+            </div>
+            <div class="modal-body">
+                <div class="image-preview-container">
+                    <img id="modalImagePreview" class="image-preview" alt="图片预览">
+                    <div id="noImageText" class="no-image-text">暂无图片</div>
+                    <div class="image-upload-container">
+                        <label for="imageUpload" class="upload-label">
+                            选择图片上传
+                            <input type="file" id="imageUpload" class="upload-input" accept="image/*">
+                        </label>
+                        <button id="saveImageBtn" class="save-btn" disabled>保存图片</button>
+                    </div>
+                </div>
+                <div class="resource-info" id="resourceInfo">
+                    <!-- 资源信息将通过JavaScript动态生成 -->
+                </div>
+            </div>
         </div>
     </div>
 

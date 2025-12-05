@@ -177,27 +177,7 @@ function resetSearch() {
     loadResources();
 }
 
-// 处理图片文件选择
-function handleImageFileChange() {
-    const fileInput = document.getElementById('imageFileInput');
-    const imagePreview = document.getElementById('imagePreview');
-    const imageUrlInput = document.getElementById('imageUrlInput');
-    
-    if (fileInput.files && fileInput.files[0]) {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            // 显示图片预览
-            imagePreview.src = e.target.result;
-            imagePreview.style.display = 'block';
-            
-            // 将本地图片转换为DataURL并设置到图片URL输入框
-            imageUrlInput.value = e.target.result;
-        }
-        
-        reader.readAsDataURL(fileInput.files[0]);
-    }
-}
+// 图片文件处理函数已删除，不再需要图片上传功能
 
 // 显示添加表单
 function showAddForm() {
@@ -228,20 +208,8 @@ function showAddForm() {
     const descriptionInput = document.getElementById('descriptionInput');
     if (descriptionInput) descriptionInput.value = '';
     
-    const imageUrlInput = document.getElementById('imageUrlInput');
-    if (imageUrlInput) imageUrlInput.value = '';
-    
     const statusSelect = document.getElementById('statusSelect');
     if (statusSelect) statusSelect.value = '可观看';
-    
-    const imageFileInput = document.getElementById('imageFileInput');
-    if (imageFileInput) imageFileInput.value = '';
-    
-    const imagePreview = document.getElementById('imagePreview');
-    if (imagePreview) {
-        imagePreview.src = '';
-        imagePreview.style.display = 'none';
-    }
     
     const resourceModal = document.getElementById('resourceModal');
     if (resourceModal) resourceModal.style.display = 'flex';
@@ -280,26 +248,8 @@ async function editResource(resourceId) {
         const descriptionInput = document.getElementById('descriptionInput');
         if (descriptionInput) descriptionInput.value = resource.description || '';
         
-        const imageUrlInput = document.getElementById('imageUrlInput');
-        if (imageUrlInput) imageUrlInput.value = resource.imageUrl || '';
-        
         const statusSelect = document.getElementById('statusSelect');
         if (statusSelect) statusSelect.value = resource.status;
-        
-        const imageFileInput = document.getElementById('imageFileInput');
-        if (imageFileInput) imageFileInput.value = '';
-        
-        // 显示图片预览
-        const imagePreview = document.getElementById('imagePreview');
-        if (imagePreview) {
-            if (resource.imageUrl) {
-                imagePreview.src = resource.imageUrl;
-                imagePreview.style.display = 'block';
-            } else {
-                imagePreview.src = '';
-                imagePreview.style.display = 'none';
-            }
-        }
         
         const resourceModal = document.getElementById('resourceModal');
         if (resourceModal) resourceModal.style.display = 'flex';
@@ -321,7 +271,6 @@ async function saveResource(event) {
         category: document.getElementById('categoryInput').value,
         country: document.getElementById('countryInput').value,
         description: document.getElementById('descriptionInput').value,
-        imageUrl: document.getElementById('imageUrlInput').value,
         status: document.getElementById('statusSelect').value
     };
     
@@ -346,11 +295,6 @@ async function saveResource(event) {
         });
         
         if (response.ok) {
-            // 如果是更新"一人之下"资源，同步更新shouye.js文件
-            if (resourceData.title === '一人之下' || (currentEditingResourceId && currentEditingResourceId === 2)) {
-                updateShouyeImage(resourceData.imageUrl);
-            }
-            
             hideResourceModal();
             loadResources();
             loadStats();
@@ -364,23 +308,7 @@ async function saveResource(event) {
     }
 }
 
-// 更新shouye.js文件中的"一人之下"资源图片
-async function updateShouyeImage(imageUrl) {
-    try {
-        // 这里可以实现更新shouye.js文件的逻辑
-        // 由于前端JavaScript无法直接修改服务器上的文件
-        // 可以考虑通过API将图片URL发送到后端，由后端更新shouye.js文件
-        console.log('更新shouye.js中的"一人之下"资源图片:', imageUrl);
-        
-        // 临时解决方案：通过浏览器本地存储同步图片URL
-        localStorage.setItem('yirenzhixiaImageUrl', imageUrl);
-        
-        alert('"一人之下"资源图片已更新到本地存储，shouye页面将自动使用新图片');
-    } catch (error) {
-        console.error('更新shouye.js文件失败:', error);
-        alert('更新shouye页面图片失败');
-    }
-}
+
 
 // 删除资源
 async function deleteResource(resourceId) {

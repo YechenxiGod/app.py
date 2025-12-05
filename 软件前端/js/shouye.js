@@ -244,8 +244,24 @@ class ContentManager {
         this.popularContentElement = document.getElementById('popular-content');
         this.carouselContainerElement = document.getElementById('carousel-container');
         
+        // 弹窗相关元素
+        this.imageModal = document.getElementById('imageModal');
+        this.closeModalBtn = document.querySelector('.close-modal');
+        this.modalTitle = document.getElementById('modalTitle');
+        this.modalImagePreview = document.getElementById('modalImagePreview');
+        this.noImageText = document.getElementById('noImageText');
+        this.imageUpload = document.getElementById('imageUpload');
+        this.saveImageBtn = document.getElementById('saveImageBtn');
+        this.resourceInfo = document.getElementById('resourceInfo');
+        
+        // 当前选中的资源
+        this.currentResource = null;
+        
         // API基础URL - 与管理后台保持一致
         this.API_BASE_URL = 'http://localhost:5000/api';
+        
+        // 初始化弹窗事件
+        this.initializeModalEvents();
         
         // 从数据库获取的资源数据
         this.mockResources = [
@@ -456,6 +472,13 @@ class ContentManager {
         this.loadAndRenderPopularContent();
         this.loadAndRenderCarousel();
         this.setupSidebarNavigation();
+        
+        // 添加定期刷新机制，每30秒更新一次数据，确保与管理后台同步
+        this.refreshInterval = setInterval(() => {
+            console.log('定期刷新热门推荐和轮播图数据');
+            this.loadAndRenderPopularContent();
+            this.loadAndRenderCarousel();
+        }, 30000); // 30秒刷新一次
     }
     
     // 设置侧边栏导航
@@ -510,70 +533,49 @@ class ContentManager {
         }
     }
     
-    // 获取热门推荐数据 - 更新为使用与管理后台相同的API
+    // 获取热门推荐数据 - 使用API的文本内容，但不使用API的图片URL
     async fetchPopularContent() {
         try {
-            // 尝试从与管理后台相同的API获取资源数据
+            // 从与管理后台相同的API获取资源数据
             const response = await fetch(`${this.API_BASE_URL}/resources`);
             if (response.ok) {
                 const data = await response.json();
                 console.log('使用API数据:', data);
-                // 返回所有数据，并转换字段名
-                const result = data.map(resource => ({
-                    resourceID: resource.ResourceID || resource.resourceID,
-                    code: resource.Code || resource.code,
-                    title: resource.Name || resource.title,
-                    director: resource.Director || resource.director,
-                    producer: resource.Studio || resource.producer,
-                    category: resource.Category || resource.category,
-                    country: resource.Country || resource.country,
-                    description: resource.Description || resource.description,
-                    status: resource.Status || resource.status,
-                    imageUrl: resource.ImageURL || resource.imageUrl
-                }));
-                console.log('转换后的API数据:', result);
-                
-                // 检查本地存储中是否有"一人之下"资源的图片URL
-                const yirenzhixiaImageUrl = localStorage.getItem('yirenzhixiaImageUrl');
-                if (yirenzhixiaImageUrl) {
-                    // 更新"一人之下"资源的图片URL
-                    const yirenzhixiaIndex = result.findIndex(item => item.title === '一人之下' || item.title === '一人之夏');
-                    if (yirenzhixiaIndex !== -1) {
-                        result[yirenzhixiaIndex].imageUrl = yirenzhixiaImageUrl;
+                // 返回所有数据，并转换字段名以保持一致性
+                return data.map(resource => {
+                    // 先从localStorage尝试获取图片URL（只使用资源ID作为键）
+                const resourceId = resource.ResourceID || resource.resourceID;
+                const idKey = `resourceImage_${resourceId}`;
+                let imageUrl = localStorage.getItem(idKey);
+                    
+                    // 如果localStorage没有，则使用默认图片URL
+                    if (!imageUrl) {
+                        // 为每个资源生成一个唯一的默认图片URL
+                        const seed = resource.ResourceID || resource.Name || Math.random().toString(36).substr(2, 9);
+                        imageUrl = `https://picsum.photos/seed/${seed}/400/600`;
                     }
-                }
-                
-                return result;
+                    
+                    return {
+                        resourceID: resource.ResourceID || resource.resourceID,
+                        ResourceID: resource.ResourceID || resource.resourceID, // 保留原始ResourceID字段
+                        code: resource.Code || resource.code,
+                        title: resource.Name || resource.title,
+                        Name: resource.Name || resource.title, // 保留原始Name字段
+                        director: resource.Director || resource.director,
+                        producer: resource.Studio || resource.producer,
+                        category: resource.Category || resource.category,
+                        country: resource.Country || resource.country,
+                        description: resource.Description || resource.description,
+                        status: resource.Status || resource.status,
+                        imageUrl: imageUrl
+                    };
+                });
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
-            console.log('API调用失败，使用模拟数据:', error);
-            // 返回模拟数据，并转换为与API相同的字段名格式
-            const result = this.mockResources.map(resource => ({
-                resourceID: resource.ResourceID,
-                code: resource.Code,
-                title: resource.Name,
-                director: resource.Director,
-                producer: resource.Studio,
-                category: resource.Category,
-                country: resource.Country,
-                description: resource.Description,
-                status: resource.Status,
-                imageUrl: resource.ImageURL
-            }));
-            console.log('使用模拟数据:', result);
-            
-            // 检查本地存储中是否有"一人之下"资源的图片URL
-            const yirenzhixiaImageUrl = localStorage.getItem('yirenzhixiaImageUrl');
-            if (yirenzhixiaImageUrl) {
-                // 更新"一人之下"资源的图片URL
-                const yirenzhixiaIndex = result.findIndex(item => item.title === '一人之下' || item.title === '一人之夏');
-                if (yirenzhixiaIndex !== -1) {
-                    result[yirenzhixiaIndex].imageUrl = yirenzhixiaImageUrl;
-                }
-            }
-            
-            return result;
+            console.error('获取热门推荐数据失败:', error);
+            // API调用失败时返回空数组，避免使用模拟数据导致不一致
+            return [];
         }
     }
     
@@ -589,7 +591,7 @@ class ContentManager {
         }
     }
     
-    // 渲染热门推荐 - 更新以支持与管理后台相同的API数据结构
+    // 渲染热门推荐 - 完全基于API数据
     renderPopularContent(resources) {
         if (!this.popularContentElement || !resources || resources.length === 0) return;
         
@@ -598,14 +600,19 @@ class ContentManager {
         
         // 创建资源卡片 - 包含所有类别（国漫、日漫、特摄、美漫、短剧、电影）
         resources.forEach(resource => {
+            const resourceId = resource.resourceID || resource.ResourceID;
             const item = document.createElement('div');
             item.className = 'popular-item';
+            item.dataset.resourceId = resourceId; // 添加data-resource-id属性
             
             // 添加状态标签 - 根据资源状态显示不同样式
             const statusClass = resource.status === '可观看' ? 'status-available' : 'status-unavailable';
             
+            // 只使用API返回的图片URL，确保与数据库同步
+            const imageUrl = resource.imageUrl || 'https://picsum.photos/seed/default/400/600';
+            
             item.innerHTML = `
-                <img src="${resource.imageUrl || 'https://picsum.photos/seed/default/400/600'}" alt="${resource.title}">
+                <img src="${imageUrl}" alt="${resource.title}">
                 <span class="content-status ${statusClass}">${resource.status || '可观看'}</span>
                 <div class="popular-item-info">
                     <div class="popular-item-title">${resource.title}</div>
@@ -623,58 +630,371 @@ class ContentManager {
             
             // 添加点击事件
             item.addEventListener('click', () => {
-                console.log('查看资源:', resource.Name);
-                // 可以添加跳转到详情页的逻辑
+                this.openImageModal(resource);
             });
             
             this.popularContentElement.appendChild(item);
         });
     }
     
-    // 获取轮播图数据 - 修改为从API资源中随机抽取
+    // 初始化弹窗事件
+    initializeModalEvents() {
+        // 关闭弹窗事件
+        this.closeModalBtn.addEventListener('click', () => {
+            this.closeImageModal();
+        });
+        
+        // 点击弹窗外部关闭弹窗
+        this.imageModal.addEventListener('click', (e) => {
+            if (e.target === this.imageModal) {
+                this.closeImageModal();
+            }
+        });
+        
+        // 图片上传事件
+        this.imageUpload.addEventListener('change', (e) => {
+            this.handleImageUpload(e);
+        });
+        
+        // 保存图片事件
+        this.saveImageBtn.addEventListener('click', () => {
+            this.saveImage();
+        });
+    }
+    
+    // 打开图片弹窗
+    openImageModal(resource) {
+        this.currentResource = resource;
+        
+        // 设置弹窗标题
+        this.modalTitle.textContent = resource.title;
+        
+        // 加载资源信息
+        this.loadResourceInfo(resource);
+        
+        // 显示当前图片（如果有）
+        this.displayCurrentImage(resource);
+        
+        // 重置上传状态
+        this.imageUpload.value = '';
+        this.saveImageBtn.disabled = true;
+        
+        // 显示弹窗
+        this.imageModal.style.display = 'block';
+    }
+    
+    // 关闭图片弹窗
+    closeImageModal() {
+        this.imageModal.style.display = 'none';
+        this.currentResource = null;
+    }
+    
+    // 加载资源信息
+    loadResourceInfo(resource) {
+        this.resourceInfo.innerHTML = `
+            <div class="info-item">
+                <span class="info-label">资源ID:</span>
+                <span class="info-value">${resource.resourceID || resource.ResourceID || '未知'}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">编码:</span>
+                <span class="info-value">${resource.code || resource.Code || '未知'}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">类别:</span>
+                <span class="info-value">${resource.category || resource.Category || '未知'}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">国家:</span>
+                <span class="info-value">${resource.country || resource.Country || '未知'}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">导演:</span>
+                <span class="info-value">${resource.director || resource.Director || '未知'}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">工作室:</span>
+                <span class="info-value">${resource.producer || resource.Studio || '未知'}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">状态:</span>
+                <span class="info-value">${resource.status || resource.Status || '未知'}</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">描述:</span>
+                <span class="info-value">${resource.description || resource.Description || '暂无描述'}</span>
+            </div>
+        `;
+    }
+    
+    // 显示当前图片
+    displayCurrentImage(resource) {
+        // 只使用资源ID作为键
+        const resourceId = resource.resourceID || resource.ResourceID;
+        const idKey = `resourceImage_${resourceId}`;
+        
+        const storedImageUrl = localStorage.getItem(idKey);
+        const imageUrl = storedImageUrl || (resource.imageUrl || resource.ImageURL);
+        
+        if (imageUrl && imageUrl !== 'https://picsum.photos/seed/default/400/600') {
+            this.modalImagePreview.src = imageUrl;
+            this.modalImagePreview.style.display = 'block';
+            this.noImageText.style.display = 'none';
+        } else {
+            this.modalImagePreview.style.display = 'none';
+            this.noImageText.style.display = 'block';
+        }
+    }
+    
+    // 处理图片上传并压缩
+    handleImageUpload(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        // 使用canvas压缩图片
+        const img = new Image();
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            img.src = e.target.result;
+        };
+        
+        img.onload = () => {
+            // 创建canvas并设置压缩后的尺寸
+            const canvas = document.createElement('canvas');
+            const MAX_WIDTH = 800;
+            const MAX_HEIGHT = 1200;
+            
+            let width = img.width;
+            let height = img.height;
+            
+            // 按比例缩小图片
+            if (width > height) {
+                if (width > MAX_WIDTH) {
+                    height *= MAX_WIDTH / width;
+                    width = MAX_WIDTH;
+                }
+            } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+            }
+            
+            canvas.width = width;
+            canvas.height = height;
+            
+            // 绘制压缩后的图片
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            
+            // 转换为DataURL，设置压缩质量
+            const compressedDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+            
+            // 显示压缩后的图片
+            this.modalImagePreview.src = compressedDataUrl;
+            this.modalImagePreview.style.display = 'block';
+            this.noImageText.style.display = 'none';
+            this.saveImageBtn.disabled = false;
+        };
+        
+        reader.readAsDataURL(file);
+    }
+    
+    // 保存图片
+    saveImage() {
+        // 添加调试信息
+        console.log('saveImage方法被调用');
+        console.log('currentResource:', this.currentResource);
+        console.log('modalImagePreview.src:', this.modalImagePreview.src);
+        
+        // 检查必要条件
+        if (!this.currentResource) {
+            console.error('currentResource不存在');
+            alert('保存失败：当前资源信息不存在');
+            return;
+        }
+        
+        if (!this.modalImagePreview.src) {
+            console.error('modalImagePreview.src不存在');
+            alert('保存失败：没有要保存的图片');
+            return;
+        }
+        
+        try {
+            // 获取资源ID - 使用原始ResourceID作为唯一标识
+            const resourceId = this.currentResource.ResourceID || this.currentResource.resourceID || Math.random().toString(36).substr(2, 9);
+            
+            console.log('保存图片的资源ID:', resourceId);
+            
+            // 使用统一的键名格式（只使用资源ID）
+            const idKey = `resourceImage_${resourceId}`;
+            
+            console.log('保存键:', idKey);
+            
+            // 保存图片URL到localStorage
+            localStorage.setItem(idKey, this.modalImagePreview.src);
+            
+            // 更新当前资源的图片
+            if (this.currentResource.imageUrl) {
+                this.currentResource.imageUrl = this.modalImagePreview.src;
+            } else if (this.currentResource.ImageURL) {
+                this.currentResource.ImageURL = this.modalImagePreview.src;
+            }
+            
+            // 立即更新当前热门推荐项的图片
+            const popularItems = this.popularContentElement.querySelectorAll('.popular-item');
+            popularItems.forEach(item => {
+                const itemId = item.dataset.resourceId;
+                if (itemId == resourceId) { // 使用宽松比较，避免类型问题
+                    const imgElement = item.querySelector('img');
+                    if (imgElement) {
+                        imgElement.src = this.modalImagePreview.src;
+                        console.log('立即更新了图片显示');
+                    }
+                }
+            });
+            
+            // 更新轮播图中的图片
+            this.loadAndRenderCarousel();
+            
+            // 提示保存成功
+            alert('图片已保存成功！');
+            
+            // 禁用保存按钮
+            this.saveImageBtn.disabled = true;
+            
+        } catch (error) {
+            console.error('保存图片失败:', error);
+            
+            // 处理localStorage配额错误
+            if (error.name === 'QuotaExceededError' || error.message.includes('exceeded the quota')) {
+                try {
+                    // 只删除当前资源的旧键（如果存在），而不是清理所有键
+                    const oldKeys = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key.startsWith('resourceImage_') && key.endsWith(resourceId)) {
+                            oldKeys.push(key);
+                        }
+                    }
+                    
+                    // 删除旧键
+                    oldKeys.forEach(key => {
+                        localStorage.removeItem(key);
+                    });
+                    
+                    // 再次尝试保存
+                    const idKey = `resourceImage_${resourceId}`;
+                    localStorage.setItem(idKey, this.modalImagePreview.src);
+                    
+                    this.refreshPopularContent();
+                    alert('图片已保存（清理旧数据后）');
+                    this.saveImageBtn.disabled = true;
+                } catch (retryError) {
+                    alert('保存失败：存储空间不足。请清理浏览器缓存或选择更小的图片。');
+                }
+            } else {
+                alert('保存图片失败: ' + error.message);
+            }
+        }
+    }
+    
+    // 清理localStorage空间（不再使用，避免误删用户数据）
+    cleanupLocalStorage(aggressive = false) {
+        console.log('清理localStorage空间功能已禁用，避免误删用户数据...');
+    }
+    
+    // 刷新热门推荐内容
+    refreshPopularContent() {
+        // 重新获取并渲染热门推荐
+        this.loadAndRenderPopularContent();
+    }
+    
+    // 获取轮播图数据 - 使用API的文本内容，但不使用API的图片URL
     async fetchCarouselData() {
         try {
-            // 尝试从与管理后台相同的API获取资源数据
+            // 从与管理后台和热门推荐相同的API获取资源数据
             const response = await fetch(`${this.API_BASE_URL}/resources`);
             if (response.ok) {
                 const data = await response.json();
-                // 随机排序并固定返回7个轮播项，同时转换字段名
-                return [...data]
-                    .sort(() => 0.5 - Math.random())
-                    .slice(0, 7)
-                    .map(resource => ({
-                        resourceID: resource.ResourceID || resource.resourceID,
-                        code: resource.Code || resource.code,
-                        title: resource.Name || resource.title,
-                        director: resource.Director || resource.director,
-                        producer: resource.Studio || resource.producer,
-                        category: resource.Category || resource.category,
-                        country: resource.Country || resource.country,
-                        description: resource.Description || resource.description,
-                        status: resource.Status || resource.status,
-                        imageUrl: resource.ImageURL || resource.imageUrl
-                    }));
+                // 使用固定排序（基于资源ID）并返回前3个轮播项，确保刷新页面时轮播图内容不变
+                const carouselData = [...data]
+                    .sort((a, b) => (a.ResourceID || 0) - (b.ResourceID || 0))
+                    .slice(0, 3)
+                    .map(resource => {
+                        // 先从localStorage尝试获取图片URL（只使用资源ID作为键）
+                        const idKey = `resourceImage_${resource.ResourceID}`;
+                        let imageUrl = localStorage.getItem(idKey);
+                        
+                        // 如果localStorage没有，则使用默认图片URL
+                        if (!imageUrl) {
+                            // 为每个资源生成一个唯一的默认图片URL
+                            const seed = `carousel_${resource.ResourceID || resource.Name || Math.random().toString(36).substr(2, 9)}`;
+                            imageUrl = `https://picsum.photos/seed/${seed}/1200/400`;
+                        }
+                        
+                        return {
+                            resourceID: resource.ResourceID || resource.resourceID,
+                            ResourceID: resource.ResourceID || resource.resourceID, // 保留原始ResourceID字段
+                            code: resource.Code || resource.code,
+                            title: resource.Name || resource.title,
+                            Name: resource.Name || resource.title, // 保留原始Name字段
+                            director: resource.Director || resource.director,
+                            producer: resource.Studio || resource.producer,
+                            category: resource.Category || resource.category,
+                            country: resource.Country || resource.country,
+                            description: resource.Description || resource.description,
+                            status: resource.Status || resource.status,
+                            imageUrl: imageUrl
+                        };
+                    });
+                
+                console.log('轮播图使用API数据:', carouselData);
+                return carouselData;
             }
             throw new Error('API返回非成功状态');
         } catch (error) {
-            console.log('轮播图API调用失败，使用模拟数据:', error);
-            // 从模拟数据中随机选择7个，并转换为与API相同的字段名格式
-            const carouselData = [...this.mockResources]
-                .sort(() => 0.5 - Math.random())
-                .slice(0, 7)
-                .map(resource => ({
-                    resourceID: resource.ResourceID,
-                    code: resource.Code,
-                    title: resource.Name,
-                    director: resource.Director,
-                    producer: resource.Studio,
-                    category: resource.Category,
-                    country: resource.Country,
-                    description: resource.Description,
-                    status: resource.Status,
-                    imageUrl: resource.ImageURL
-                }));
-            return carouselData;
+            console.error('获取轮播数据失败:', error);
+            // API失败时使用默认轮播数据
+            return [
+                { 
+                    resourceID: 1, 
+                    ResourceID: 1, // 保留原始ResourceID字段
+                    title: '热门动漫', 
+                    Name: '热门动漫', // 保留原始Name字段
+                    description: '精彩动漫内容推荐', 
+                    category: '动画', 
+                    country: '未知', 
+                    director: '未知', 
+                    status: '可观看', 
+                    imageUrl: 'https://picsum.photos/seed/carousel1/1200/400' 
+                },
+                { 
+                    resourceID: 2, 
+                    ResourceID: 2, // 保留原始ResourceID字段
+                    title: '最新特摄', 
+                    Name: '最新特摄', // 保留原始Name字段
+                    description: '最新特摄剧推荐', 
+                    category: '特摄', 
+                    country: '未知', 
+                    director: '未知', 
+                    status: '可观看', 
+                    imageUrl: 'https://picsum.photos/seed/carousel2/1200/400' 
+                },
+                { 
+                    resourceID: 3, 
+                    ResourceID: 3, // 保留原始ResourceID字段
+                    title: '经典回顾', 
+                    Name: '经典回顾', // 保留原始Name字段
+                    description: '经典动漫回顾', 
+                    category: '动画', 
+                    country: '未知', 
+                    director: '未知', 
+                    status: '可观看', 
+                    imageUrl: 'https://picsum.photos/seed/carousel3/1200/400' 
+                }
+            ];
         }
     }
     
@@ -891,6 +1211,18 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // 未登录状态显示默认值
             userNameElement.textContent = '请登录';
+        }
+        
+        // 控制返回管理界面按钮的显示/隐藏
+        const backToAdminBtn = document.getElementById('backToAdminBtn');
+        if (backToAdminBtn) {
+            if (user && user.isAdmin) {
+                // 管理员用户显示返回管理界面按钮
+                backToAdminBtn.style.display = 'block';
+            } else {
+                // 普通用户或未登录状态隐藏返回管理界面按钮
+                backToAdminBtn.style.display = 'none';
+            }
         }
     }
     
