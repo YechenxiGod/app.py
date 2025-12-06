@@ -326,11 +326,13 @@ async function deleteResource(resourceId) {
             loadStats();
             alert('资源删除成功');
         } else {
-            alert('删除失败');
+            // 获取详细错误信息
+            const errorData = await response.json();
+            alert('删除失败: ' + (errorData.error || '未知错误'));
         }
     } catch (error) {
         console.error('删除资源失败:', error);
-        alert('删除失败');
+        alert('删除失败: 网络或服务器错误');
     }
 }
 

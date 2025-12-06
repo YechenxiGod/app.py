@@ -188,6 +188,8 @@ def add_resource():
             Director=data['director'],
             Studio=data.get('producer'),
             Category=data.get('category'),
+            Country=data.get('country'),
+            Description=data.get('description'),
             Status=data.get('status', '可观看')
         )
 
@@ -217,6 +219,10 @@ def update_resource(resource_id):
             resource.Studio = data['producer']
         if 'category' in data:
             resource.Category = data['category']
+        if 'country' in data:
+            resource.Country = data['country']
+        if 'description' in data:
+            resource.Description = data['description']
         if 'status' in data:
             resource.Status = data['status']
 
@@ -233,8 +239,8 @@ def delete_resource(resource_id):
     try:
         resource = Resource.query.get_or_404(resource_id)
 
-        # 检查是否有未归还的借阅记录
-        active_records = BorrowRecord.query.filter_by(ResourceID=resource_id, ReturnDate=None).first()
+        # 检查是否有未归还的借阅记录（使用BookID而非ResourceID）
+        active_records = BorrowRecord.query.filter_by(BookID=resource_id, ReturnDate=None).first()
         if active_records:
             return jsonify({"error": "该资源有未归还的借阅记录，无法删除"}), 400
 
@@ -277,7 +283,7 @@ def borrow_resource(resource_id):
         resource.Status = '已借出'
 
         borrow_record = BorrowRecord(
-            ResourceID=resource_id,
+            BookID=resource_id,
             BorrowerName=data['borrowerName'],
             BorrowDate=date.today(),
             Notes=data.get('notes')
@@ -307,7 +313,7 @@ def return_resource(record_id):
     """归还动漫特摄资源"""
     try:
         record = BorrowRecord.query.get_or_404(record_id)
-        resource = Resource.query.get_or_404(record.ResourceID)
+        resource = Resource.query.get_or_404(record.BookID)  # 修正为BookID
 
         record.ReturnDate = date.today()
         resource.Status = '可观看'

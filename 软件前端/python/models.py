@@ -72,7 +72,7 @@ class BorrowRecord(db.Model):
     __tablename__ = 'borrow_records'
 
     RecordID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    ResourceID = db.Column(db.Integer, db.ForeignKey('resources.ResourceID'), nullable=False)
+    BookID = db.Column(db.Integer, db.ForeignKey('resources.ResourceID'), nullable=False)  # 修正为BookID与数据库一致
     BorrowerName = db.Column(db.String(50), nullable=False)
     BorrowDate = db.Column(db.Date, nullable=False)
     ReturnDate = db.Column(db.Date)
@@ -81,7 +81,7 @@ class BorrowRecord(db.Model):
     def to_dict(self):
         return {
             'recordID': self.RecordID,
-            'resourceID': self.ResourceID,
+            'resourceID': self.BookID,  # 保持API输出兼容性
             'borrowerName': self.BorrowerName,
             'borrowDate': self.BorrowDate.isoformat() if self.BorrowDate else None,
             'returnDate': self.ReturnDate.isoformat() if self.ReturnDate else None,
