@@ -628,9 +628,14 @@ class ContentManager {
                 </div>
             `;
             
-            // 添加点击事件
+            // 添加点击事件 - 只有管理员可以打开图片设置
             item.addEventListener('click', () => {
-                this.openImageModal(resource);
+                // 检查当前登录用户是否为管理员
+                const currentUser = JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+                if (currentUser && currentUser.isAdmin) {
+                    this.openImageModal(resource);
+                }
+                // 普通用户点击无反应
             });
             
             this.popularContentElement.appendChild(item);
@@ -911,57 +916,37 @@ class ContentManager {
         this.loadAndRenderPopularContent();
     }
     
-    // 获取轮播图数据 - 使用API的文本内容，但不使用API的图片URL
+    // 获取轮播图数据 - 与热门推荐使用相同的图片源和资源数据
     async fetchCarouselData() {
         try {
-            // 从与管理后台和热门推荐相同的API获取资源数据
-            const response = await fetch(`${this.API_BASE_URL}/resources`);
-            if (response.ok) {
-                const data = await response.json();
-                // 使用固定排序（基于资源ID）并返回前3个轮播项，确保刷新页面时轮播图内容不变
-                const carouselData = [...data]
-                    .sort((a, b) => (a.ResourceID || 0) - (b.ResourceID || 0))
-                    .slice(0, 3)
-                    .map(resource => {
-                        // 先从localStorage尝试获取图片URL（只使用资源ID作为键）
-                        const idKey = `resourceImage_${resource.ResourceID}`;
-                        let imageUrl = localStorage.getItem(idKey);
-                        
-                        // 如果localStorage没有，则使用默认图片URL
-                        if (!imageUrl) {
-                            // 为每个资源生成一个唯一的默认图片URL
-                            const seed = `carousel_${resource.ResourceID || resource.Name || Math.random().toString(36).substr(2, 9)}`;
-                            imageUrl = `https://picsum.photos/seed/${seed}/1200/400`;
-                        }
-                        
-                        return {
-                            resourceID: resource.ResourceID || resource.resourceID,
-                            ResourceID: resource.ResourceID || resource.resourceID, // 保留原始ResourceID字段
-                            code: resource.Code || resource.code,
-                            title: resource.Name || resource.title,
-                            Name: resource.Name || resource.title, // 保留原始Name字段
-                            director: resource.Director || resource.director,
-                            producer: resource.Studio || resource.producer,
-                            category: resource.Category || resource.category,
-                            country: resource.Country || resource.country,
-                            description: resource.Description || resource.description,
-                            status: resource.Status || resource.status,
-                            imageUrl: imageUrl
-                        };
-                    });
-                
-                console.log('轮播图使用API数据:', carouselData);
-                return carouselData;
-            }
-            throw new Error('API返回非成功状态');
+            // 复用热门推荐的数据获取逻辑，确保轮播图和热门推荐使用相同的数据源
+            const popularData = await this.fetchPopularContent();
+            
+            // 从热门推荐数据中选择前3个作为轮播图内容，使用相同的排序方式
+            // 这样可以确保轮播图图片与热门推荐图片完全同步
+            const carouselData = popularData
+                .slice(0, 3)
+                .map(resource => {
+                    // 保持与热门推荐相同的图片URL，确保同步
+                    return {
+                        ...resource,
+                        // 轮播图可以使用不同的图片尺寸，但来源与热门推荐相同
+                        // 如果需要保持完全一致的图片，可以直接使用resource.imageUrl
+                        // 这里使用localStorage中的图片URL，与热门推荐保持同步
+                        imageUrl: resource.imageUrl
+                    };
+                });
+            
+            console.log('轮播图使用热门推荐数据:', carouselData);
+            return carouselData;
         } catch (error) {
             console.error('获取轮播数据失败:', error);
             // API失败时使用默认轮播数据
             return [
-                { 
-                    resourceID: 1, 
+                {
+                    resourceID: 1,
                     ResourceID: 1, // 保留原始ResourceID字段
-                    title: '热门动漫', 
+                    title: '热门动漫',
                     Name: '热门动漫', // 保留原始Name字段
                     description: '精彩动漫内容推荐', 
                     category: '动画', 
