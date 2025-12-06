@@ -922,22 +922,29 @@ class ContentManager {
             // 复用热门推荐的数据获取逻辑，确保轮播图和热门推荐使用相同的数据源
             const popularData = await this.fetchPopularContent();
             
-            // 从热门推荐数据中选择前3个作为轮播图内容，使用相同的排序方式
-            // 这样可以确保轮播图图片与热门推荐图片完全同步
-            const carouselData = popularData
-                .slice(0, 3)
+            // 实现随机播放功能：从热门推荐数据中随机选择7个资源
+            // 创建数据副本以避免修改原始数组
+            const shuffledData = [...popularData];
+            
+            // Fisher-Yates 洗牌算法随机打乱数据
+            for (let i = shuffledData.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [shuffledData[i], shuffledData[j]] = [shuffledData[j], shuffledData[i]];
+            }
+            
+            // 从随机打乱的数据中选择前7个作为轮播图内容
+            const carouselData = shuffledData
+                .slice(0, 7)
                 .map(resource => {
                     // 保持与热门推荐相同的图片URL，确保同步
                     return {
                         ...resource,
-                        // 轮播图可以使用不同的图片尺寸，但来源与热门推荐相同
-                        // 如果需要保持完全一致的图片，可以直接使用resource.imageUrl
-                        // 这里使用localStorage中的图片URL，与热门推荐保持同步
+                        // 轮播图使用与热门推荐相同的图片URL
                         imageUrl: resource.imageUrl
                     };
                 });
             
-            console.log('轮播图使用热门推荐数据:', carouselData);
+            console.log('轮播图使用随机热门推荐数据:', carouselData);
             return carouselData;
         } catch (error) {
             console.error('获取轮播数据失败:', error);
