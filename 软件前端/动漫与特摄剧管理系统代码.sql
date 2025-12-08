@@ -37,7 +37,7 @@ CREATE TABLE resources (
     CreateDate DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
--- 借用记录表
+-- 观看记录表（暂时未用上）
 CREATE TABLE borrow_records (
     RecordID INT AUTO_INCREMENT PRIMARY KEY,
     ResourceID INT NOT NULL,
